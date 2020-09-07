@@ -3,15 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30204.135
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatApp.Apis", "ChatApp.Apis\ChatApp.Apis.csproj", "{C9D879D6-241F-46FC-8B7B-E9244308ADED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatApp.Apis", "ChatApp.Apis\ChatApp.Apis.csproj", "{C9D879D6-241F-46FC-8B7B-E9244308ADED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatApp.Services", "ChatApp.Services\ChatApp.Services.csproj", "{64EBFA99-16AA-4F0A-BD11-AA1D7459E7DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatApp.Services", "ChatApp.Services\ChatApp.Services.csproj", "{64EBFA99-16AA-4F0A-BD11-AA1D7459E7DE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatApp.DataAccess", "ChatApp.DataAccess\ChatApp.DataAccess.csproj", "{9DEF7C5B-C5F8-4DD0-AB76-7E696DC2ADA5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatApp.DataAccess", "ChatApp.DataAccess\ChatApp.DataAccess.csproj", "{9DEF7C5B-C5F8-4DD0-AB76-7E696DC2ADA5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatApp.Entities", "ChatApp.Entities\ChatApp.Entities.csproj", "{CEC9AFE8-F7E6-4189-8EBD-304D35BE49B6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatApp.Entities", "ChatApp.Entities\ChatApp.Entities.csproj", "{CEC9AFE8-F7E6-4189-8EBD-304D35BE49B6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatApp.UnitTests", "ChatApp.UnitTests\ChatApp.UnitTests.csproj", "{37015A66-43A2-4F5D-B4C6-9BA3AAC2542F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatApp.Repositories", "ChatApp.Repositories\ChatApp.Repositories.csproj", "{439DFF6A-FAAE-452A-A209-289706C200E7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatApp.Utilities", "ChatApp.Utilities\ChatApp.Utilities.csproj", "{105DBD3B-C971-468E-BE96-56FA3BDB47C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatApp.UnitTests.Services", "ChatApp.UnitTests.Services\ChatApp.UnitTests.Services.csproj", "{27B7B660-28CC-45F3-BE73-4FF4DC910BC6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatApp.UnitTests.Utilities", "ChatApp.UnitTests.Utilities\ChatApp.UnitTests.Utilities.csproj", "{AB50EB25-3ACA-4C56-AE89-B782DED7745C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +41,22 @@ Global
 		{CEC9AFE8-F7E6-4189-8EBD-304D35BE49B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CEC9AFE8-F7E6-4189-8EBD-304D35BE49B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CEC9AFE8-F7E6-4189-8EBD-304D35BE49B6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{37015A66-43A2-4F5D-B4C6-9BA3AAC2542F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{37015A66-43A2-4F5D-B4C6-9BA3AAC2542F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{37015A66-43A2-4F5D-B4C6-9BA3AAC2542F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{37015A66-43A2-4F5D-B4C6-9BA3AAC2542F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{439DFF6A-FAAE-452A-A209-289706C200E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{439DFF6A-FAAE-452A-A209-289706C200E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{439DFF6A-FAAE-452A-A209-289706C200E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{439DFF6A-FAAE-452A-A209-289706C200E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{105DBD3B-C971-468E-BE96-56FA3BDB47C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{105DBD3B-C971-468E-BE96-56FA3BDB47C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{105DBD3B-C971-468E-BE96-56FA3BDB47C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{105DBD3B-C971-468E-BE96-56FA3BDB47C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27B7B660-28CC-45F3-BE73-4FF4DC910BC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27B7B660-28CC-45F3-BE73-4FF4DC910BC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27B7B660-28CC-45F3-BE73-4FF4DC910BC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27B7B660-28CC-45F3-BE73-4FF4DC910BC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB50EB25-3ACA-4C56-AE89-B782DED7745C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB50EB25-3ACA-4C56-AE89-B782DED7745C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB50EB25-3ACA-4C56-AE89-B782DED7745C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB50EB25-3ACA-4C56-AE89-B782DED7745C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
