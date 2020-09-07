@@ -8,5 +8,11 @@
     <Folder Include="Controllers\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ChatApp.Entities\ChatApp.Entities.csproj" />
+    <ProjectReference Include="..\ChatApp.Services\ChatApp.Services.csproj" />
+    <ProjectReference Include="..\ChatApp.Utilities\ChatApp.Utilities.csproj" />
+  </ItemGroup>
+
 
 </Project>

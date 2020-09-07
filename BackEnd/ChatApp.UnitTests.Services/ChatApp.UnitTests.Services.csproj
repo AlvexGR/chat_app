@@ -4,4 +4,9 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ChatApp.Entities\ChatApp.Entities.csproj" />
+    <ProjectReference Include="..\ChatApp.Services\ChatApp.Services.csproj" />
+  </ItemGroup>
+
 </Project>
