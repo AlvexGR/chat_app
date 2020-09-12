@@ -9,6 +9,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ChatApp.DataAccess\ChatApp.DataAccess.csproj" />
     <ProjectReference Include="..\ChatApp.Entities\ChatApp.Entities.csproj" />
     <ProjectReference Include="..\ChatApp.Services\ChatApp.Services.csproj" />
     <ProjectReference Include="..\ChatApp.Utilities\ChatApp.Utilities.csproj" />
