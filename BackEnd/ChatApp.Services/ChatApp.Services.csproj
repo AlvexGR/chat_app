@@ -5,9 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="IServices\" />
     <Folder Include="Commons\" />
-    <Folder Include="Services\" />
   </ItemGroup>
 
   <ItemGroup>

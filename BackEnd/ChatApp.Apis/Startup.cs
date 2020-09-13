@@ -1,5 +1,7 @@
 using ChatApp.DataAccess.Contexts;
 using ChatApp.Repositories;
+using ChatApp.Services.IServices;
+using ChatApp.Services.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +39,7 @@ namespace ChatApp.Apis
             services.AddSingleton(Configuration);
             services.AddDbContext<ChatAppContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ChatAppDb")));
 
+            services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddControllersWithViews()
