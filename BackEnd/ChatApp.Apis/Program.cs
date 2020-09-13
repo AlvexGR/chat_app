@@ -28,7 +28,6 @@ namespace ChatApp.Apis
                                 fileSizeLimitBytes: 50000000,
                                 rollOnFileSizeLimit: true),
                     writeToProviders: true)
-
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
