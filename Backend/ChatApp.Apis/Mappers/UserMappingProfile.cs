@@ -2,7 +2,7 @@
 using ChatApp.Dtos.Models.Users;
 using ChatApp.Entities.Models;
 
-namespace ChatApp.Apis.Mapper
+namespace ChatApp.Apis.Mappers
 {
     public static class UserMappingProfile
     {

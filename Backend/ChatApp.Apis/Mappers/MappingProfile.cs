@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 
-namespace ChatApp.Apis.Mapper
+namespace ChatApp.Apis.Mappers
 {
     public class MappingProfile : Profile
     {

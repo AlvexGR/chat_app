@@ -1,5 +1,5 @@
 using ChatApp.Apis.Filters;
-using ChatApp.Apis.Mapper;
+using ChatApp.Apis.Mappers;
 using ChatApp.Apis.Registers;
 using ChatApp.SignalR.Registers;
 using ChatApp.Utilities.Constants;
