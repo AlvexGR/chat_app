@@ -8,6 +8,7 @@ namespace ChatApp.Apis.Mapper
         public static void CreateUserMap(this MappingProfile mappingProfile)
         {
             mappingProfile.CreateMap<User, UserDto>();
+            mappingProfile.CreateMap<User, UserResponseDto>();
             mappingProfile.CreateMap<UserDto, User>();
             mappingProfile.CreateMap<InsertUserDto, User>();
         }

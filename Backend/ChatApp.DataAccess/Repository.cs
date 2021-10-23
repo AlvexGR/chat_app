@@ -5,88 +5,115 @@ using System.Threading.Tasks;
 using ChatApp.Entities.Common;
 using ChatApp.Utilities.Constants;
 using ChatApp.Utilities.Extensions;
+using Microsoft.AspNetCore.Http;
 using MongoDB.Driver;
 
 namespace ChatApp.DataAccess
 {
-    public class Repository<T> : IRepository<T> where T : BaseModel
+    public class Repository<TDocument> : IRepository<TDocument> where TDocument : BaseModel
     {
-        private readonly string _currentUserId;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private string CurrentUserId => _httpContextAccessor.HttpContext?.Items[RequestKeys.UserId]?.ToString()
+                                        ?? GlobalConstants.DefaultUser;
 
-        public IMongoCollection<T> Collection { get; }
+        public IMongoCollection<TDocument> Collection { get; }
 
-        public Repository(string connectionString, string currentUserId)
+        public Repository(string connectionString, IHttpContextAccessor httpContextAccessor)
         {
             if (string.IsNullOrEmpty(connectionString))
             {
                 throw new ArgumentNullException(nameof(connectionString));
             }
 
-            _currentUserId = currentUserId;
+            _httpContextAccessor = httpContextAccessor;
 
             var client = new MongoClient(connectionString);
             var databaseName = new MongoUrl(connectionString).DatabaseName;
             var database = client.GetDatabase(databaseName);
 
-            Collection = database.GetCollection<T>(MongoCollectionNames.Get(typeof(T).Name));
+            Collection = database.GetCollection<TDocument>(MongoCollectionNames.Get(typeof(TDocument).Name));
         }
 
-        public async Task Insert(T entity)
+        public async Task<long> Count(FilterDefinition<TDocument> filter, CountOptions options = null)
         {
-            entity.CreatedBy = _currentUserId;
+            filter &= MongoExtension.GetBuilders<TDocument>().Ne(x => x.IsDeleted, true);
+            return await Collection.CountDocumentsAsync(filter, options);
+        }
+
+        public async Task<TDocument> First(FilterDefinition<TDocument> filter, FindOptions<TDocument, TDocument> options = null)
+        {
+            filter &= MongoExtension.GetBuilders<TDocument>().Ne(x => x.IsDeleted, true);
+            return await (await Collection.FindAsync(filter, options)).FirstAsync();
+        }
+
+        public async Task<TDocument> FirstOrDefault(FilterDefinition<TDocument> filter, FindOptions<TDocument, TDocument> options = null)
+        {
+            filter &= MongoExtension.GetBuilders<TDocument>().Ne(x => x.IsDeleted, true);
+            return await (await Collection.FindAsync(filter, options)).FirstOrDefaultAsync();
+        }
+
+        public async Task<IEnumerable<TDocument>> Current(FilterDefinition<TDocument> filter, FindOptions<TDocument, TDocument> options = null)
+        {
+            filter &= MongoExtension.GetBuilders<TDocument>().Ne(x => x.IsDeleted, true);
+            return (await Collection.FindAsync(filter, options)).Current;
+        }
+
+        public async Task Insert(TDocument entity)
+        {
+            entity.CreatedBy = CurrentUserId;
             entity.CreatedAt = DateTimeExtension.Get();
             await Collection.InsertOneAsync(entity);
         }
 
-        public async Task Insert(IEnumerable<T> entities)
+        public async Task Insert(IEnumerable<TDocument> entities)
         {
             var entitiesAsList = entities.ToList();
             foreach (var entity in entitiesAsList)
             {
-                entity.CreatedBy = _currentUserId;
+                entity.CreatedBy = CurrentUserId;
                 entity.CreatedAt = DateTimeExtension.Get();
             }
             await Collection.InsertManyAsync(entitiesAsList);
         }
 
-        public async Task Update(T entity)
+        public async Task Update(TDocument entity)
         {
-            entity.UpdatedBy = _currentUserId;
+            entity.UpdatedBy = CurrentUserId;
             entity.UpdatedAt = DateTimeExtension.Get();
             await Collection.ReplaceOneAsync(e => e.Id == entity.Id, entity);
         }
 
-        public async Task Update(IEnumerable<T> entities)
+        public async Task Update(IEnumerable<TDocument> entities)
         {
             await Task.WhenAll(entities.Select(async entity => await Update(entity)));
         }
 
-        public async Task UpdatePartial(T entity, UpdateDefinition<T> toUpdate)
+        public async Task UpdatePartial(TDocument entity, UpdateDefinition<TDocument> toUpdate)
         {
-            toUpdate = toUpdate.Set(e => e.UpdatedBy, _currentUserId);
+            toUpdate = toUpdate.Set(e => e.UpdatedBy, CurrentUserId);
             toUpdate = toUpdate.Set(e => e.UpdatedAt, DateTimeExtension.Get());
             await Collection.UpdateOneAsync(e => e.Id == entity.Id, toUpdate);
         }
 
-        public async Task DeleteSoft(T entity)
+        public async Task DeleteSoft(TDocument entity)
         {
-            var toUpdateBuilder = new UpdateDefinitionBuilder<T>();
+            var toUpdateBuilder = new UpdateDefinitionBuilder<TDocument>();
             var toUpdate = toUpdateBuilder.Set(e => e.IsDeleted, true);
 
             await UpdatePartial(entity, toUpdate);
         }
 
-        public async Task DeleteSoft(IEnumerable<T> entities)
+        public async Task DeleteSoft(IEnumerable<TDocument> entities)
         {
             await Task.WhenAll(entities.Select(async entity => await DeleteSoft(entity)));
         }
 
-        public async Task Delete(T entity)
+        public async Task Delete(TDocument entity)
         {
             await Collection.DeleteOneAsync(e => e.Id == entity.Id);
         }
 
-        public async Task Delete(IEnumerable<T> entities)
+        public async Task Delete(IEnumerable<TDocument> entities)
         {
             await Task.WhenAll(entities.Select(async entity => await Delete(entity)));
         }

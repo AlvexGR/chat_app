@@ -5,24 +5,34 @@ using MongoDB.Driver;
 
 namespace ChatApp.DataAccess
 {
-    public interface IRepository<T> where T : BaseModel
+    public interface IRepository<TDocument> where TDocument : BaseModel
     {
-        Task Insert(T entity);
+        IMongoCollection<TDocument> Collection { get; }
 
-        Task Insert(IEnumerable<T> entities);
+        Task<long> Count(FilterDefinition<TDocument> filter, CountOptions options = null);
 
-        Task Update(T entity);
+        Task<TDocument> First(FilterDefinition<TDocument> filter, FindOptions<TDocument, TDocument> options = null);
 
-        Task Update(IEnumerable<T> entities);
+        Task<TDocument> FirstOrDefault(FilterDefinition<TDocument> filter, FindOptions<TDocument, TDocument> options = null);
 
-        Task UpdatePartial(T entity, UpdateDefinition<T> toUpdate);
+        Task<IEnumerable<TDocument>> Current(FilterDefinition<TDocument> filter, FindOptions<TDocument, TDocument> options = null);
 
-        Task DeleteSoft(T entity);
+        Task Insert(TDocument entity);
 
-        Task DeleteSoft(IEnumerable<T> entities);
+        Task Insert(IEnumerable<TDocument> entities);
 
-        Task Delete(T entity);
+        Task Update(TDocument entity);
 
-        Task Delete(IEnumerable<T> entities);
+        Task Update(IEnumerable<TDocument> entities);
+
+        Task UpdatePartial(TDocument entity, UpdateDefinition<TDocument> toUpdate);
+
+        Task DeleteSoft(TDocument entity);
+
+        Task DeleteSoft(IEnumerable<TDocument> entities);
+
+        Task Delete(TDocument entity);
+
+        Task Delete(IEnumerable<TDocument> entities);
     }
 }

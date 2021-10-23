@@ -1,7 +1,6 @@
 using ChatApp.Apis.Mapper;
-using ChatApp.DataAccess;
-using ChatApp.Services.IServices;
-using ChatApp.Services.Services;
+using ChatApp.Apis.Registers;
+using ChatApp.SignalR.Registers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -27,17 +26,20 @@ namespace ChatApp.Apis
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
+
             services.AddControllers();
+            services.AddServices();
 
             services.AddAutoMapper(typeof(MappingProfile));
-
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            services.AddSignalR();
+            services.AddHubs();
+
+            services.AddFilters();
 
             services.AddSwaggerGen(c =>
             {
@@ -59,7 +61,10 @@ namespace ChatApp.Apis
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            app.UseCors(x => x
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
 
             app.UseEndpoints(endpoints =>
             {

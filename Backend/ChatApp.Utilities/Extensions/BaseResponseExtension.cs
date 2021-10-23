@@ -14,7 +14,7 @@ namespace ChatApp.Utilities.Extensions
             return response;
         }
 
-        public static BaseResponseDto<T> GenerateGeneralFailedResponse<T>(this BaseResponseDto<T> response, string errorMessage)
+        public static BaseResponseDto<T> GenerateGeneralFailedResponse<T>(this BaseResponseDto<T> response, string errorMessage = null)
         {
             response.Success = false;
             response.Result = default;
@@ -23,7 +23,7 @@ namespace ChatApp.Utilities.Extensions
             return response;
         }
 
-        public static BaseResponseDto<T> GenerateFailedResponse<T>(this BaseResponseDto<T> response, string errorCode, string errorMessage)
+        public static BaseResponseDto<T> GenerateFailedResponse<T>(this BaseResponseDto<T> response, string errorCode, string errorMessage = null)
         {
             response.Success = false;
             response.Result = default;

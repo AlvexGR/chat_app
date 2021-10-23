@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security.Claims;
 using ChatApp.Entities.Common;
 using ChatApp.Utilities.Constants;
 using Microsoft.AspNetCore.Http;
@@ -11,26 +10,27 @@ namespace ChatApp.DataAccess
     public class UnitOfWork : IUnitOfWork
     {
         private readonly IConfiguration _configuration;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly Dictionary<Type, object> _repositories;
-        private readonly string _currentUser;
 
         public UnitOfWork(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
+            _httpContextAccessor = httpContextAccessor;
             _repositories = new Dictionary<Type, object>();
-            _currentUser = httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                           ?? GlobalConstants.DefaultUser;
         }
 
-        public IRepository<TEntity> GetRepository<TEntity>() where TEntity : BaseModel
+        public IRepository<TDocument> GetRepository<TDocument>() where TDocument : BaseModel
         {
-            var type = typeof(Repository<TEntity>);
+            var type = typeof(Repository<TDocument>);
             if (!_repositories.ContainsKey(type))
             {
-                _repositories[type] = new Repository<TEntity>(_configuration.GetConnectionString("ChatAppDb"), _currentUser);
+                _repositories[type] = new Repository<TDocument>(
+                    _configuration.GetConnectionString("ChatAppDb"), 
+                    _httpContextAccessor);
             }
 
-            return (IRepository<TEntity>)_repositories[type];
+            return (IRepository<TDocument>)_repositories[type];
         }
     }
 }

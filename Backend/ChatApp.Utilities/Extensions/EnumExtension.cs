@@ -8,5 +8,15 @@ namespace ChatApp.Utilities.Extensions
         {
             return Convert.ToInt32(value);
         }
+
+        public static T ToEnum<T>(this int value) where T : Enum
+        {
+            return (T)Enum.ToObject(typeof(T), value);
+        }
+
+        public static T ToEnum<T>(this string value) where T : Enum
+        {
+            return (T)Enum.Parse(typeof(T), value);
+        }
     }
 }

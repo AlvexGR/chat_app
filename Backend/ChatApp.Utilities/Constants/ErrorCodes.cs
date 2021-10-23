@@ -6,6 +6,10 @@
 
         public const string BadRequest = "BadRequest";
 
+        public const string EmailExists = "EmailExists";
+
         public const string NotFound = "NotFound";
+
+        public const string InvalidCredential = "InvalidCredential";
     }
 }
