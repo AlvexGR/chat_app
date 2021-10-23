@@ -39,7 +39,10 @@ namespace ChatApp.Apis.Filters
 
             try
             {
-                var authToken = context.HttpContext.Request.Headers["Authorization"].ToString().Split();
+                var authToken = context.HttpContext.Request
+                    .Headers[RequestKeys.AuthorizationHeader]
+                    .ToString()
+                    .Split();
                 if (authToken.Length != 2 || authToken[0] != GlobalConstants.AuthSchema)
                 {
                     context.Result = new UnauthorizedResult();

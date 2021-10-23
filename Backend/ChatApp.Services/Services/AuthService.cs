@@ -7,10 +7,10 @@ using ChatApp.Dtos.Models.Users;
 using ChatApp.Entities.Models;
 using ChatApp.Services.IServices;
 using ChatApp.Utilities.Constants;
+using ChatApp.Utilities.Enums;
 using ChatApp.Utilities.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using MongoDB.Driver;
 
 namespace ChatApp.Services.Services
 {
@@ -69,6 +69,40 @@ namespace ChatApp.Services.Services
             };
 
             return new BaseResponseDto<LoginResponseDto>().GenerateSuccessResponse(loginResponseDto);
+        }
+
+        public async Task<BaseResponseDto<LoginResponseDto>> Register(RegisterDto registerDto)
+        {
+            if (registerDto == null ||
+                string.IsNullOrEmpty(registerDto.Email) ||
+                string.IsNullOrEmpty(registerDto.Password))
+            {
+                return new BaseResponseDto<LoginResponseDto>().GenerateFailedResponse(ErrorCodes.BadRequest);
+            }
+
+            var userRepo = _unitOfWork.GetRepository<User>();
+
+            var userQuery = MongoExtension.GetBuilders<User>()
+                .Regex(x => x.Email, registerDto.Email.MongoIgnoreCase());
+
+            var existed = await userRepo.Count(userQuery);
+            if (existed != 0)
+            {
+                return new BaseResponseDto<LoginResponseDto>().GenerateFailedResponse(ErrorCodes.EmailExists);
+            }
+
+            var user = _mapper.Map<User>(registerDto);
+
+            user.Password = user.Password.HashMd5();
+            user.Role = UserRole.User.ToInt();
+
+            await userRepo.Insert(user);
+
+            return await Login(new LoginRequestDto
+            {
+                Email = registerDto.Email,
+                Password = registerDto.Password
+            });
         }
     }
 }

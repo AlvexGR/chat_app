@@ -1,6 +1,8 @@
+using ChatApp.Apis.Filters;
 using ChatApp.Apis.Mapper;
 using ChatApp.Apis.Registers;
 using ChatApp.SignalR.Registers;
+using ChatApp.Utilities.Constants;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -44,6 +46,15 @@ namespace ChatApp.Apis
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ChatApp.Apis", Version = "v1" });
+                c.AddSecurityDefinition(GlobalConstants.AuthSchema, new OpenApiSecurityScheme
+                {
+                    Scheme = GlobalConstants.AuthSchema,
+                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                    Name = RequestKeys.AuthorizationHeader,
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                });
+                c.OperationFilter<SwaggerAuthorizationHeaderFilter>();
             });
         }
 

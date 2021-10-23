@@ -38,5 +38,21 @@ namespace ChatApp.Apis.Controllers.v1
                     .GenerateGeneralFailedResponse(ex.ToString());
             }
         }
+
+        [HttpPost]
+        [Route("register")]
+        public async Task<BaseResponseDto<LoginResponseDto>> Register(RegisterDto registerDto)
+        {
+            try
+            {
+                return await _authService.Register(registerDto);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Register error: {ex}");
+                return new BaseResponseDto<LoginResponseDto>()
+                    .GenerateGeneralFailedResponse(ex.ToString());
+            }
+        }
     }
 }
