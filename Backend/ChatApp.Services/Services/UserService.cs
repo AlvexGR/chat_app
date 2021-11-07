@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using AutoMapper;
 using ChatApp.DataAccess;
 using ChatApp.Dtos.Common;
@@ -110,7 +111,9 @@ namespace ChatApp.Services.Services
                 return new BaseResponseDto<ChangePasswordResponseDto>().GenerateFailedResponse(ErrorCodes.NotFound);
             }
 
-            if (user.Password != hashCurrentPassword)
+            var isGoogleLogin = Convert.ToBoolean(_httpContextAccessor.HttpContext.Items[RequestKeys.IsGoogleLogin]);
+
+            if (!isGoogleLogin && user.Password != hashCurrentPassword)
             {
                 _logger.LogError("Incorrect password");
                 return new BaseResponseDto<ChangePasswordResponseDto>().GenerateFailedResponse(ErrorCodes.IncorrectCurrentPassword);

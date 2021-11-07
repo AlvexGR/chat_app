@@ -9,5 +9,7 @@
         public const string UserEmail = "Email";
 
         public const string UserRole = "Role";
+
+        public const string IsGoogleLogin = "IsGoogleLogin";
     }
 }

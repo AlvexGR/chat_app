@@ -89,6 +89,7 @@ namespace ChatApp.Apis.Filters
                 context.HttpContext.Items[RequestKeys.UserId] = user.Id;
                 context.HttpContext.Items[RequestKeys.UserEmail] = user.Email;
                 context.HttpContext.Items[RequestKeys.UserRole] = user.Role;
+                context.HttpContext.Items[RequestKeys.IsGoogleLogin] = isGoogleLogin.ToString();
             }
             catch (Exception ex)
             {
