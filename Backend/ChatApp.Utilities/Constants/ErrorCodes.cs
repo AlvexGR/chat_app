@@ -17,5 +17,7 @@
         public const string SameNewPassword = "SAME_NEW_PASSWORD";
 
         public const string IncorrectCurrentPassword = "INCORRECT_CURRENT_PASSWORD";
+
+        public const string AccountHasNotBeenConfirmed = "ACCOUNT_HAS_NOT_BEEN_CONFIRMED";
     }
 }

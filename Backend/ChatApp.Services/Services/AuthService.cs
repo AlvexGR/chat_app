@@ -96,7 +96,11 @@ namespace ChatApp.Services.Services
 
             var user = _mapper.Map<User>(registerDto);
 
+            user.FirstName = user.FirstName.Trim();
+            user.LastName = user.LastName.Trim();
+            user.Email = user.Email.Trim();
             user.Password = user.Password.HashMd5();
+            user.ConfirmationToken = Guid.NewGuid().ToString().HashMd5();
             user.Role = UserRole.User.ToInt();
 
             await userRepo.Insert(user);
@@ -137,7 +141,7 @@ namespace ChatApp.Services.Services
                     FirstName = payload.GivenName,
                     LastName = payload.FamilyName,
                     Role = UserRole.User.ToInt(),
-                    GooglePassword = Guid.NewGuid().ToString(),
+                    GooglePassword = Guid.NewGuid().ToString().HashMd5()
                 };
 
                 await userRepo.Insert(user);

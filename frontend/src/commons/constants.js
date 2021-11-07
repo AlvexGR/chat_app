@@ -40,10 +40,16 @@ const roles = {
   ADMIN: 2,
 };
 
+const regexPatterns = {
+  PASSWORD: /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{7,})/,
+  EMAIL: /\S+@\S+\.\S+/,
+};
+
 export const constants = {
   authSchema,
   dateTimeFormat,
   storeKeys,
   routing,
-  roles
+  roles,
+  regexPatterns
 }

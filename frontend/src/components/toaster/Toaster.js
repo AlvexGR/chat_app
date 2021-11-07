@@ -27,7 +27,7 @@ const Toaster = (props) => {
     <ToastContainer
       position={toast.POSITION.BOTTOM_CENTER}
       transition={Flip}
-      autoClose={2000}
+      autoClose={3000}
       limit={3}
       hideProgressBar={false}
       newestOnTop={false}

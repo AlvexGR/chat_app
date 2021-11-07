@@ -37,7 +37,6 @@ const Login = () => {
     if (!validateInputs()) return;
     const result = await authService.login(email, password);
     if (!result || !result.success) return;
-    console.log(result.data);
     localStorageService.setValue(
       constants.storeKeys.LOGIN_USER,
       result.data.user
@@ -91,12 +90,12 @@ const Login = () => {
             </div>
             <div className="d-flex justify-content-between mt-3">
               <p>
-                <Link className="vertical-center" to="/forgot-password">
+                <Link className="vertical-center" to={constants.routing.FORGOT_PASSWORD}>
                   Forgot password?
                 </Link>
               </p>
               <p>
-                Need an account? <Link to="/register">Register</Link>
+                Need an account? <Link to={constants.routing.REGISTER}>Register</Link>
               </p>
             </div>
             <div className="d-grid my-3">

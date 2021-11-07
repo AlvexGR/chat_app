@@ -14,6 +14,10 @@ namespace ChatApp.Entities.Models
 
         public int Role { get; set; }
 
+        public bool IsConfirmed { get; set; }
+
+        public string ConfirmationToken { get; set; }
+
         public string GooglePassword { get; set; }
     }
 }

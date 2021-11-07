@@ -111,6 +111,11 @@ namespace ChatApp.Services.Services
                 return new BaseResponseDto<ChangePasswordResponseDto>().GenerateFailedResponse(ErrorCodes.NotFound);
             }
 
+            if (!user.IsConfirmed)
+            {
+                return new BaseResponseDto<ChangePasswordResponseDto>().GenerateFailedResponse(ErrorCodes.AccountHasNotBeenConfirmed);
+            }
+
             var isGoogleLogin = Convert.ToBoolean(_httpContextAccessor.HttpContext.Items[RequestKeys.IsGoogleLogin]);
 
             if (!isGoogleLogin && user.Password != hashCurrentPassword)
@@ -121,7 +126,7 @@ namespace ChatApp.Services.Services
 
             var hashNewPassword = changePasswordRequestDto.NewPassword.HashMd5();
             user.Password = hashNewPassword;
-            
+
             var updateDefinition = new UpdateDefinitionBuilder<User>()
                 .Set(x => x.Password, user.Password);
 

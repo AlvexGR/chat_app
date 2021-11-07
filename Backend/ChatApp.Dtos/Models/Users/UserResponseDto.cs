@@ -9,5 +9,7 @@
         public string Email { get; set; }
 
         public int Role { get; set; }
+
+        public bool IsConfirmed { get; set; }
     }
 }
