@@ -9,5 +9,7 @@ namespace ChatApp.Services.IServices
         Task<BaseResponseDto<LoginResponseDto>> Login(LoginRequestDto loginRequestDto);
 
         Task<BaseResponseDto<LoginResponseDto>> Register(RegisterDto registerDto);
+
+        Task<BaseResponseDto<LoginResponseDto>> GoogleLogin(GoogleLoginRequestDto loginRequestDto);
     }
 }

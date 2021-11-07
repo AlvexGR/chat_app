@@ -24,6 +24,7 @@ const dateTimeFormat = {
 const routing = {
   HOME: "/",
   LOGIN: "/login",
+  GOOGLE_LOGIN_REDIRECT: "/google-login-redirect",
   REGISTER: "/register",
   FORGOT_PASSWORD: "/forgot-password",
   ADMIN: "/admin",

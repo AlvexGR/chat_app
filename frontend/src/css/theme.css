@@ -1,0 +1,17 @@
+/* Dark theme*/
+:root {
+  --dark-theme-bg: black;
+  --dark-theme-text: white;
+}
+
+/* Light theme*/
+:root {
+  --light-theme-bg: white;
+  --light-theme-text: black;
+}
+
+/* Color */
+:root {
+  --color-danger: #dc3545;
+  --color-success: #198754;
+}

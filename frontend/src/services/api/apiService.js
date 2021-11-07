@@ -5,6 +5,7 @@ import { storeActions } from "../../commons/storeActions";
 import store from "../../store";
 import { authService } from "./authService";
 
+const PROTOCOL = process.env.REACT_APP_PROTOCOL;
 const BASE_URL = process.env.REACT_APP_API_URL;
 
 axios.interceptors.response.use(
@@ -12,12 +13,12 @@ axios.interceptors.response.use(
     if (!res.data) {
       throw new Error("Response data is null");
     }
-    if (res.data.succeed) return res.data;
+    if (res.data.success) return res.data;
     store.dispatch({
       type: storeActions.toaster.set,
       ...{
         toasterType: messages.toasterTypes.ERROR,
-        message: messages.errorMessage[res.data.errorCode],
+        message: messages.errorMessages[res.data.errorCode],
       },
     });
     return res.data;
@@ -32,7 +33,7 @@ axios.interceptors.response.use(
         case 401:
           authService.logout();
           message =
-            messages.errorMessage[messages.errorCodes.UNAUTHORIZED];
+            messages.errorMessages[messages.errorCodes.UNAUTHORIZED];
           store.dispatch({
             type: storeActions.auth.set,
             ...{
@@ -42,7 +43,7 @@ axios.interceptors.response.use(
           break;
         case 403:
           message =
-            messages.errorMessage[messages.errorCodes.FORBIDDEN];
+            messages.errorMessages[messages.errorCodes.FORBIDDEN];
           store.dispatch({
             type: storeActions.auth.set,
             ...{
@@ -71,7 +72,7 @@ const getHeaders = (extra) => {
   const token = authService.getToken();
   return token
     ? {
-        Authorization: `${constants.authScheme} ${token}`,
+        Authorization: `${constants.authSchema} ${token}`,
         ...extra,
       }
     : "";
@@ -90,7 +91,7 @@ const httpGet = async (url) => {
 
 const httpPost = async (url, data) => {
   try {
-    return await axios.post(`${BASE_URL}/${url}`, data, {
+    return await axios.post(`${PROTOCOL}://${BASE_URL}/${url}`, data, {
       headers: getHeaders(),
     });
   } catch (error) {

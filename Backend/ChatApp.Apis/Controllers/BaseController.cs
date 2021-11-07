@@ -1,4 +1,5 @@
 ﻿using ChatApp.Apis.Filters;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChatApp.Apis.Controllers
@@ -7,5 +8,11 @@ namespace ChatApp.Apis.Controllers
     [ServiceFilter(typeof(AuthFilter))]
     public class BaseController : ControllerBase
     {
+        protected readonly IHttpContextAccessor HttpContextAccessor;
+
+        public BaseController(IHttpContextAccessor httpContextAccessor)
+        {
+            HttpContextAccessor = httpContextAccessor;
+        }
     }
 }

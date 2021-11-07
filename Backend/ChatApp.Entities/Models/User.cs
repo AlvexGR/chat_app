@@ -13,5 +13,7 @@ namespace ChatApp.Entities.Models
         public string Password { get; set; }
 
         public int Role { get; set; }
+
+        public string GooglePassword { get; set; }
     }
 }

@@ -8,7 +8,7 @@ namespace ChatApp.Utilities.Extensions
         public static BaseResponseDto<T> GenerateSuccessResponse<T>(this BaseResponseDto<T> response, T data)
         {
             response.Success = true;
-            response.Result = data;
+            response.Data = data;
             response.ErrorCode = null;
             response.ErrorMessage = null;
             return response;
@@ -17,7 +17,7 @@ namespace ChatApp.Utilities.Extensions
         public static BaseResponseDto<T> GenerateGeneralFailedResponse<T>(this BaseResponseDto<T> response, string errorMessage = null)
         {
             response.Success = false;
-            response.Result = default;
+            response.Data = default;
             response.ErrorCode = ErrorCodes.InternalServerError;
             response.ErrorMessage = errorMessage;
             return response;
@@ -26,7 +26,7 @@ namespace ChatApp.Utilities.Extensions
         public static BaseResponseDto<T> GenerateFailedResponse<T>(this BaseResponseDto<T> response, string errorCode, string errorMessage = null)
         {
             response.Success = false;
-            response.Result = default;
+            response.Data = default;
             response.ErrorCode = errorCode;
             response.ErrorMessage = errorMessage;
             return response;

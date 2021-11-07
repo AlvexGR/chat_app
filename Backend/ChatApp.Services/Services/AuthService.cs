@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using AutoMapper;
 using ChatApp.DataAccess;
 using ChatApp.Dtos.Common;
@@ -9,6 +10,7 @@ using ChatApp.Services.IServices;
 using ChatApp.Utilities.Constants;
 using ChatApp.Utilities.Enums;
 using ChatApp.Utilities.Extensions;
+using Google.Apis.Auth;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -16,16 +18,20 @@ namespace ChatApp.Services.Services
 {
     public class AuthService : IAuthService
     {
+        private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<AuthService> _logger;
         private readonly IMapper _mapper;
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IConfiguration _configuration;
 
-        public AuthService(ILogger<AuthService> logger, IMapper mapper, IUnitOfWork unitOfWork, IConfiguration configuration)
+        public AuthService(
+            IUnitOfWork unitOfWork,
+            ILogger<AuthService> logger,
+            IMapper mapper,
+            IConfiguration configuration)
         {
+            _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
-            _unitOfWork = unitOfWork;
             _configuration = configuration;
         }
 
@@ -57,10 +63,7 @@ namespace ChatApp.Services.Services
                     .GenerateFailedResponse(ErrorCodes.InvalidCredential);
             }
 
-            var jwtSetting = new JwtSettingDto();
-            _configuration
-                .GetSection(AppSettingKeys.JwtSettingSection)
-                .Bind(jwtSetting);
+            var jwtSetting = GetJwtSetting();
 
             var loginResponseDto = new LoginResponseDto
             {
@@ -103,6 +106,67 @@ namespace ChatApp.Services.Services
                 Email = registerDto.Email,
                 Password = registerDto.Password
             });
+        }
+
+        public async Task<BaseResponseDto<LoginResponseDto>> GoogleLogin(GoogleLoginRequestDto loginRequestDto)
+        {
+            if (loginRequestDto == null || string.IsNullOrEmpty(loginRequestDto.Token))
+            {
+                return new BaseResponseDto<LoginResponseDto>()
+                    .GenerateFailedResponse(ErrorCodes.BadRequest);
+            }
+
+            var payload = await GoogleJsonWebSignature.ValidateAsync(loginRequestDto.Token);
+
+            var jwtSetting = GetJwtSetting();
+
+            var userRepo = _unitOfWork.GetRepository<User>();
+
+            var userQuery = MongoExtension.GetBuilders<User>()
+                .Regex(x => x.Email, payload.Email.MongoIgnoreCase());
+
+            var user = await userRepo.FirstOrDefault(userQuery);
+
+            LoginResponseDto loginResponseDto;
+
+            if (user == null)
+            {
+                user = new User
+                {
+                    Email = payload.Email,
+                    FirstName = payload.GivenName,
+                    LastName = payload.FamilyName,
+                    Role = UserRole.User.ToInt(),
+                    GooglePassword = Guid.NewGuid().ToString(),
+                };
+
+                await userRepo.Insert(user);
+
+                loginResponseDto = new LoginResponseDto
+                {
+                    User = _mapper.Map<UserResponseDto>(user),
+                    Token = user.GenerateAccessToken(jwtSetting, true)
+                };
+
+                return new BaseResponseDto<LoginResponseDto>().GenerateSuccessResponse(loginResponseDto);
+            }
+
+            loginResponseDto = new LoginResponseDto
+            {
+                User = _mapper.Map<UserResponseDto>(user),
+                Token = user.GenerateAccessToken(jwtSetting)
+            };
+
+            return new BaseResponseDto<LoginResponseDto>().GenerateSuccessResponse(loginResponseDto);
+        }
+
+        private JwtSettingDto GetJwtSetting()
+        {
+            var jwtSetting = new JwtSettingDto();
+            _configuration
+                .GetSection(AppSettingKeys.JwtSettingSection)
+                .Bind(jwtSetting);
+            return jwtSetting;
         }
     }
 }

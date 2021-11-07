@@ -1,4 +1,3 @@
-// @flow
 import { useEffect } from "react";
 import { connect } from "react-redux";
 import { Flip, toast, ToastContainer } from "react-toastify";
@@ -20,6 +19,8 @@ const Toaster = (props) => {
       default:
         break;
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.toasterReducer.counter]);
 
   return (

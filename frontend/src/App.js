@@ -1,4 +1,3 @@
-// @flow
 import React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { constants } from "./commons/constants";
@@ -11,6 +10,7 @@ const loading = (
 );
 
 const Login = React.lazy(() => import("./pages/login/Login"));
+const GoogleLogin = React.lazy(() => import("./pages/login/GoogleLogin"));
 const Register = React.lazy(() => import("./pages/register/Register"));
 const ForgotPassword = React.lazy(() => import("./pages/forgotPassword/ForgotPassword"));
 const Forbidden = React.lazy(() => import("./pages/forbidden/Forbidden"));
@@ -18,7 +18,7 @@ const NotFound = React.lazy(() => import("./pages/notFound/NotFound"));
 
 function App() {
   return (
-    <div>
+    <div className="container-fluid">
       <BrowserRouter>
         <React.Suspense fallback={loading}>
           <Switch>
@@ -27,6 +27,12 @@ function App() {
               path={constants.routing.LOGIN}
               name="Login"
               render={(props) => <Login {...props} />}
+            />
+            <Route
+              exact
+              path={constants.routing.GOOGLE_LOGIN_REDIRECT}
+              name="GoogleLogin"
+              render={(props) => <GoogleLogin {...props} />}
             />
             <Route
               exact

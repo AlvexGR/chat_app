@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using ChatApp.Dtos.Models.Auths;
 using ChatApp.Entities.Models;
+using ChatApp.Utilities.Constants;
 using Microsoft.IdentityModel.Tokens;
 
 namespace ChatApp.Utilities.Extensions
@@ -30,26 +31,24 @@ namespace ChatApp.Utilities.Extensions
             return sb.ToString();
         }
 
-        public static string GenerateAccessToken(this User user, JwtSettingDto jwtSettingDto)
+        public static string GenerateAccessToken(this User user, JwtSettingDto jwtSettingDto, bool isGoogleLogin = false)
         {
             if (jwtSettingDto == null)
             {
                 throw new ArgumentNullException(nameof(jwtSettingDto));
             }
 
-            if (string.IsNullOrEmpty(jwtSettingDto.Secret))
-            {
-                throw new ArgumentNullException(nameof(jwtSettingDto.Secret));
-            }
-
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(jwtSettingDto.Secret);
+            var key = Encoding.ASCII.GetBytes(!isGoogleLogin
+                ? user.Password
+                : user.GooglePassword);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id),
-                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(UserClaimTypes.UserId, user.Id),
+                    new Claim(UserClaimTypes.Email, user.Email),
+                    new Claim(UserClaimTypes.IsGoogleLogin, isGoogleLogin.ToString()),
                 }),
                 Expires = DateTimeExtension.Get().AddDays(jwtSettingDto.ExpiredInDays),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

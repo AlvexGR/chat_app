@@ -2,15 +2,24 @@ import { constants } from "../../commons/constants";
 import { localStorageService } from "../app/localStorageService";
 import { apiService } from "./apiService";
 
-const API_VERSION = process.env.API_VERSION;
+const API_VERSION = process.env.REACT_APP_API_VERSION;
 const BASE_URL = "api/auth";
 
 const register = async (data) => {
   return await apiService.httpPost(`${BASE_URL}/${API_VERSION}/register`, data);
-}
+};
 
-const login = async (username, password) => {
-  return await apiService.httpPost(`${BASE_URL}/${API_VERSION}/login`, { username, password });
+const login = async (email, password) => {
+  return await apiService.httpPost(`${BASE_URL}/${API_VERSION}/login`, {
+    email,
+    password,
+  });
+};
+
+const googleLogin = async (token) => {
+  return await apiService.httpPost(`${BASE_URL}/${API_VERSION}/google-login`, {
+    token,
+  });
 };
 
 const logout = () => {
@@ -41,30 +50,31 @@ const getName = () => {
   if (!userRaw) return "";
   const user = JSON.parse(userRaw);
   return user.name;
-}
+};
 
 const getEmail = () => {
   const userRaw = localStorageService.getValue(constants.storeKeys.LOGIN_USER);
   if (!userRaw) return "";
   const user = JSON.parse(userRaw);
   return user.email;
-}
+};
 
 const getId = () => {
   const userRaw = localStorageService.getValue(constants.storeKeys.LOGIN_USER);
   if (!userRaw) return "";
   const user = JSON.parse(userRaw);
   return user._id;
-}
+};
 
 export const authService = {
   register,
   login,
+  googleLogin,
   logout,
   getToken,
   isLoggedIn,
   getName,
   getEmail,
   getId,
-  isAdmin
+  isAdmin,
 };

@@ -6,6 +6,8 @@ namespace ChatApp.Services.IServices
 {
     public interface IUserService
     {
-        Task<BaseResponseDto<bool>> InsertUser(InsertUserDto insertUserDto);
+        Task<BaseResponseDto<bool>> Insert(InsertUserDto insertUserDto);
+
+        Task<BaseResponseDto<ChangePasswordResponseDto>> ChangePassword(ChangePasswordRequestDto changePasswordRequestDto);
     }
 }
