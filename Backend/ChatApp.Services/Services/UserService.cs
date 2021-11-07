@@ -140,6 +140,11 @@ namespace ChatApp.Services.Services
             });
         }
 
+        public Task<BaseResponseDto<bool>> SendAccountConfirmation(string email)
+        {
+            throw new NotImplementedException();
+        }
+
         private JwtSettingDto GetJwtSetting()
         {
             var jwtSetting = new JwtSettingDto();

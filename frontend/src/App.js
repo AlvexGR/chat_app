@@ -12,6 +12,7 @@ const loading = (
 const Login = React.lazy(() => import("./pages/login/Login"));
 const GoogleLogin = React.lazy(() => import("./pages/login/GoogleLogin"));
 const Register = React.lazy(() => import("./pages/register/Register"));
+const AccountConfirmation = React.lazy(() => import("./pages/accountConfirmation/AccountConfirmation"));
 const ForgotPassword = React.lazy(() => import("./pages/forgotPassword/ForgotPassword"));
 const Forbidden = React.lazy(() => import("./pages/forbidden/Forbidden"));
 const NotFound = React.lazy(() => import("./pages/notFound/NotFound"));
@@ -31,7 +32,7 @@ function App() {
             <Route
               exact
               path={constants.routing.GOOGLE_LOGIN_REDIRECT}
-              name="GoogleLogin"
+              name="Google login"
               render={(props) => <GoogleLogin {...props} />}
             />
             <Route
@@ -39,6 +40,12 @@ function App() {
               path={constants.routing.REGISTER}
               name="Register"
               render={(props) => <Register {...props} />}
+            />
+            <Route
+              exact
+              path={constants.routing.ACCOUNT_CONFIRMATION}
+              name="Account confirmation"
+              render={(props) => <AccountConfirmation {...props} />}
             />
             <Route
               exact

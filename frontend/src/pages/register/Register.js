@@ -21,6 +21,8 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const resetErrors = () => {
     setFirstNameError("");
     setLastNameError("");
@@ -72,12 +74,14 @@ const Register = () => {
   const register = async () => {
     if (!validateInputs()) return;
 
+    setIsLoading(true);
     const result = await authService.register({
       firstName,
       lastName,
       email,
       password,
     });
+    setIsLoading(false);
 
     if (!result || !result.success) return;
     console.log(result.data);
@@ -196,7 +200,7 @@ const Register = () => {
               </p>
             </div>
             <div className="d-grid mb-3">
-              <button className="btn btn-success" onClick={register}>
+              <button className="btn btn-success" onClick={register} disabled={isLoading}>
                 <i className="fas fa-user-plus me-2"></i>Register
               </button>
             </div>

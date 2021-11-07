@@ -12,6 +12,9 @@ const Login = () => {
   const [emailError, setEmailError] = useState("");
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
+
+  const [isLoading, setIsLoading] = useState(false);
+
   const resetErrors = () => {
     setEmailError("");
     setPasswordError("");
@@ -35,7 +38,11 @@ const Login = () => {
 
   const login = async () => {
     if (!validateInputs()) return;
+
+    setIsLoading(true);
     const result = await authService.login(email, password);
+    setIsLoading(false);
+
     if (!result || !result.success) return;
     localStorageService.setValue(
       constants.storeKeys.LOGIN_USER,
@@ -99,7 +106,7 @@ const Login = () => {
               </p>
             </div>
             <div className="d-grid my-3">
-              <button className="btn btn-primary" onClick={login}>
+              <button className="btn btn-primary" onClick={login} disabled={isLoading}>
                 <i className="fas fa-sign-in-alt me-2"></i>Login
               </button>
             </div>

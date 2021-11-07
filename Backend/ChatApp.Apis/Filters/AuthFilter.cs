@@ -11,7 +11,6 @@ using ChatApp.Utilities.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
@@ -21,13 +20,11 @@ namespace ChatApp.Apis.Filters
     {
         private readonly ILogger<AuthFilter> _logger;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IConfiguration _configuration;
 
-        public AuthFilter(ILogger<AuthFilter> logger, IUnitOfWork unitOfWork, IConfiguration configuration)
+        public AuthFilter(ILogger<AuthFilter> logger, IUnitOfWork unitOfWork)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
-            _configuration = configuration;
         }
 
         public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
@@ -55,7 +52,7 @@ namespace ChatApp.Apis.Filters
                 var token = handler.ReadJwtToken(authorization[1]);
 
                 var userId = token.Claims
-                    .First(x => FilterClaim(x, UserClaimTypes.UserId))
+                    .First(x => x.Type == UserClaimTypes.UserId)
                     .Value;
 
                 var builder = MongoExtension.GetBuilders<User>();
@@ -69,7 +66,7 @@ namespace ChatApp.Apis.Filters
                 }
 
                 var isGoogleLogin = Convert.ToBoolean(token.Claims
-                    .First(x => FilterClaim(x, UserClaimTypes.IsGoogleLogin))
+                    .First(x => x.Type == UserClaimTypes.IsGoogleLogin)
                     .Value);
 
                 var key = Encoding.ASCII.GetBytes(

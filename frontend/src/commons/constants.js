@@ -26,10 +26,11 @@ const routing = {
   LOGIN: "/login",
   GOOGLE_LOGIN_REDIRECT: "/google-login-redirect",
   REGISTER: "/register",
+  ACCOUNT_CONFIRMATION: "/account-confirmation/:token",
   FORGOT_PASSWORD: "/forgot-password",
   ADMIN: "/admin",
   ADMINS: {
-    USERS: "/users"
+    USERS: "/users",
   },
   FORBIDDEN: "/forbidden",
   NOT_FOUND: "*",
@@ -51,5 +52,5 @@ export const constants = {
   storeKeys,
   routing,
   roles,
-  regexPatterns
-}
+  regexPatterns,
+};

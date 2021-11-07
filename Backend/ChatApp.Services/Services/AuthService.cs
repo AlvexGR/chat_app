@@ -4,6 +4,7 @@ using AutoMapper;
 using ChatApp.DataAccess;
 using ChatApp.Dtos.Common;
 using ChatApp.Dtos.Models.Auths;
+using ChatApp.Dtos.Models.Emails;
 using ChatApp.Dtos.Models.Users;
 using ChatApp.Entities.Models;
 using ChatApp.Services.IServices;
@@ -13,6 +14,7 @@ using ChatApp.Utilities.Extensions;
 using Google.Apis.Auth;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using MongoDB.Driver;
 
 namespace ChatApp.Services.Services
 {
@@ -22,17 +24,20 @@ namespace ChatApp.Services.Services
         private readonly ILogger<AuthService> _logger;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
+        private readonly IEmailService _emailService;
 
         public AuthService(
             IUnitOfWork unitOfWork,
             ILogger<AuthService> logger,
             IMapper mapper,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IEmailService emailService)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
             _configuration = configuration;
+            _emailService = emailService;
         }
 
         public async Task<BaseResponseDto<LoginResponseDto>> Login(LoginRequestDto loginRequestDto)
@@ -105,6 +110,14 @@ namespace ChatApp.Services.Services
 
             await userRepo.Insert(user);
 
+            await _emailService.Send(new EmailDto
+            {
+                Title = "Welcome to my Chat App. Please confirm your account!",
+                Address = user.Email,
+                Content =
+                    $"Please click on the following link to confirm your account: {_configuration[AppSettingKeys.FrontEndHost]}/confirm-account/{user.ConfirmationToken}"
+            });
+
             return await Login(new LoginRequestDto
             {
                 Email = registerDto.Email,
@@ -159,6 +172,53 @@ namespace ChatApp.Services.Services
             {
                 User = _mapper.Map<UserResponseDto>(user),
                 Token = user.GenerateAccessToken(jwtSetting)
+            };
+
+            return new BaseResponseDto<LoginResponseDto>().GenerateSuccessResponse(loginResponseDto);
+        }
+
+        public async Task<BaseResponseDto<LoginResponseDto>> ConfirmAccount(string token)
+        {
+            var userRepo = _unitOfWork.GetRepository<User>();
+
+            var userQuery = MongoExtension.GetBuilders<User>()
+                .Regex(x => x.ConfirmationToken, token);
+
+            var user = await userRepo.FirstOrDefault(userQuery);
+
+            if (user == null)
+            {
+                _logger.LogError($"Unable to find any user with this confirmation token: {token}");
+                return new BaseResponseDto<LoginResponseDto>()
+                    .GenerateFailedResponse(ErrorCodes.NotFound);
+            }
+
+            var jwtSetting = GetJwtSetting();
+
+            LoginResponseDto loginResponseDto;
+
+            if (user.IsConfirmed)
+            {
+                loginResponseDto = new LoginResponseDto
+                {
+                    User = _mapper.Map<UserResponseDto>(user),
+                    Token = user.GenerateAccessToken(jwtSetting, true)
+                };
+
+                return new BaseResponseDto<LoginResponseDto>().GenerateSuccessResponse(loginResponseDto);
+            }
+
+            user.IsConfirmed = true;
+
+            var updateDefinition = new UpdateDefinitionBuilder<User>()
+                .Set(x => x.IsConfirmed, user.IsConfirmed);
+
+            await userRepo.UpdatePartial(user, updateDefinition);
+
+            loginResponseDto = new LoginResponseDto
+            {
+                User = _mapper.Map<UserResponseDto>(user),
+                Token = user.GenerateAccessToken(jwtSetting, true)
             };
 
             return new BaseResponseDto<LoginResponseDto>().GenerateSuccessResponse(loginResponseDto);

@@ -75,5 +75,21 @@ namespace ChatApp.Apis.Controllers.v1
                     .GenerateGeneralFailedResponse(ex.ToString());
             }
         }
+
+        [HttpPost]
+        [Route("confirm-account/{token}")]
+        public async Task<BaseResponseDto<LoginResponseDto>> ConfirmAccount(string token)
+        {
+            try
+            {
+                return await _authService.ConfirmAccount(token);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Confirm account error: {ex}");
+                return new BaseResponseDto<LoginResponseDto>()
+                    .GenerateGeneralFailedResponse(ex.ToString());
+            }
+        }
     }
 }

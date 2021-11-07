@@ -4,6 +4,8 @@
     {
         public const string JwtSettingSection = "Jwt";
 
-        public const string JwtSecret = "Jwt:Secret";
+        public const string EmailSettingSection = "Email";
+
+        public const string FrontEndHost = "FrontEndHost";
     }
 }

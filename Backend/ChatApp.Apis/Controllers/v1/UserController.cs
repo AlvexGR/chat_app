@@ -60,5 +60,22 @@ namespace ChatApp.Apis.Controllers.v1
                     .GenerateGeneralFailedResponse(ex.ToString());
             }
         }
+
+        [HttpPost]
+        [Route("send-confirmation/{email}")]
+        public async Task<BaseResponseDto<bool>> SendAccountConfirmation(string email)
+        {
+            try
+            {
+                return await _userService.SendAccountConfirmation(email);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Send confirmation email error: {ex}");
+                return new BaseResponseDto<bool>()
+                    .GenerateGeneralFailedResponse(ex.ToString());
+            }
+        }
+
     }
 }

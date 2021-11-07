@@ -9,5 +9,7 @@ namespace ChatApp.Services.IServices
         Task<BaseResponseDto<bool>> Insert(InsertUserDto insertUserDto);
 
         Task<BaseResponseDto<ChangePasswordResponseDto>> ChangePassword(ChangePasswordRequestDto changePasswordRequestDto);
+
+        Task<BaseResponseDto<bool>> SendAccountConfirmation(string email);
     }
 }
