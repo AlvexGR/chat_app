@@ -157,6 +157,21 @@ namespace ChatApp.Services.Services
                 return new BaseResponseDto<bool>().GenerateFailedResponse(ErrorCodes.NotFound);
             }
 
+            if (user.IsConfirmed)
+            {
+                _logger.LogError("user is confirmed");
+                return new BaseResponseDto<bool>().GenerateSuccessResponse(true);
+            }
+
+            if (string.IsNullOrEmpty(user.ConfirmationToken))
+            {
+                user.ConfirmationToken = Guid.NewGuid().ToString().HashMd5();
+                var updateDefinition = new UpdateDefinitionBuilder<User>()
+                    .Set(x => x.ConfirmationToken, user.ConfirmationToken);
+
+                await userRepo.UpdatePartial(user, updateDefinition);
+            }
+
             var result = await _emailService.Send(new EmailDto
             {
                 Title = EmailTemplates.ConfirmAccountTitle,
