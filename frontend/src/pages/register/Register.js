@@ -6,6 +6,7 @@ import { messages } from "../../commons/messages";
 import { storeActions } from "../../commons/storeActions";
 import { authService } from "../../services/api/authService";
 import { localStorageService } from "../../services/app/localStorageService";
+import "./register.css";
 
 const Register = () => {
   const dispatch = useDispatch();
@@ -105,7 +106,7 @@ const Register = () => {
 
   return (
     <div className="row vh-100">
-      <div className="col-3 mx-auto my-auto">
+      <div className="col-lg-4 register-box mx-auto my-auto">
         <div className="card px-3 pt-3">
           <div className="card-body">
             <h2 className="horizontal-center mb-2">Register</h2>
@@ -123,7 +124,7 @@ const Register = () => {
                   {firstNameError}
                 </div>
               </div>
-              <div className="col-md-6 form-group">
+              <div className="col-md-6 form-group last-name-ctrl">
                 <label>Last name:</label>
                 <input
                   className="form-control"

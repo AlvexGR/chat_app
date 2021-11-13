@@ -4,6 +4,7 @@ import { constants } from "../../commons/constants";
 import { authService } from "../../services/api/authService";
 import { localStorageService } from "../../services/app/localStorageService";
 import { GoogleLogin } from "react-google-login";
+import "./login.css";
 
 const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
@@ -57,12 +58,12 @@ const Login = () => {
 
   return (
     <div className="row vh-100">
-      <div className="col-3 mx-auto my-auto">
+      <div className="col-lg-4 login-box mx-auto my-auto">
         <div className="card px-3 pt-3">
           <div className="card-body">
             <h2 className="horizontal-center mb-2">Login</h2>
             <div className="horizontal-center mb-3">
-              Please enter your Email and Password.
+              Please enter your credential.
             </div>
             <div className="form-group">
               <label>Email:</label>
@@ -95,15 +96,15 @@ const Login = () => {
                 {passwordError}
               </div>
             </div>
-            <div className="d-flex justify-content-between mt-3">
-              <p>
-                <Link className="vertical-center" to={constants.routing.FORGOT_PASSWORD}>
+            <div className="login-options mt-3">
+              <div>
+                <Link to={constants.routing.FORGOT_PASSWORD}>
                   Forgot password?
                 </Link>
-              </p>
-              <p>
+              </div>
+              <div>
                 Need an account? <Link to={constants.routing.REGISTER}>Register</Link>
-              </p>
+              </div>
             </div>
             <div className="d-grid my-3">
               <button className="btn btn-primary" onClick={login} disabled={isLoading}>

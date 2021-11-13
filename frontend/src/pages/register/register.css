@@ -1,0 +1,27 @@
+@media (min-width: 576px) {
+  .register-box {
+    width: 500px;
+  }
+}
+
+@media (max-width: 767px) {
+  .last-name-ctrl {
+    margin-top: 1rem;
+  }
+}
+
+@media (min-width: 768px) {
+  
+}
+
+@media (min-width: 992px) {
+  
+}
+
+@media (min-width: 1200px) {
+  
+}
+
+@media (min-width: 1400px) {
+  
+}

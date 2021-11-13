@@ -11,7 +11,5 @@ namespace ChatApp.Services.IServices
         Task<BaseResponseDto<LoginResponseDto>> Register(RegisterDto registerDto);
 
         Task<BaseResponseDto<LoginResponseDto>> GoogleLogin(GoogleLoginRequestDto loginRequestDto);
-
-        Task<BaseResponseDto<LoginResponseDto>> ConfirmAccount(string token);
     }
 }

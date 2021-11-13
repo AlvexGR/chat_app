@@ -2,11 +2,12 @@
 using System.Threading.Tasks;
 using ChatApp.Apis.Filters;
 using ChatApp.Dtos.Common;
+using ChatApp.Dtos.Models.Auths;
 using ChatApp.Dtos.Models.Users;
 using ChatApp.Services.IServices;
 using ChatApp.Utilities.Enums;
 using ChatApp.Utilities.Extensions;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -19,10 +20,8 @@ namespace ChatApp.Apis.Controllers.v1
         private readonly IUserService _userService;
 
         public UserController(
-            IHttpContextAccessor httpContextAccessor,
             ILogger<UserController> logger,
             IUserService userService)
-            : base(httpContextAccessor)
         {
             _logger = logger;
             _userService = userService;
@@ -62,12 +61,12 @@ namespace ChatApp.Apis.Controllers.v1
         }
 
         [HttpPost]
-        [Route("send-confirmation/{email}")]
-        public async Task<BaseResponseDto<bool>> SendAccountConfirmation(string email)
+        [Route("send-confirmation")]
+        public async Task<BaseResponseDto<bool>> SendAccountConfirmation()
         {
             try
             {
-                return await _userService.SendAccountConfirmation(email);
+                return await _userService.SendAccountConfirmation();
             }
             catch (Exception ex)
             {
@@ -77,5 +76,21 @@ namespace ChatApp.Apis.Controllers.v1
             }
         }
 
+        [HttpPost]
+        [Route("confirm-account/{token}")]
+        [AllowAnonymous]
+        public async Task<BaseResponseDto<LoginResponseDto>> ConfirmAccount(string token)
+        {
+            try
+            {
+                return await _userService.ConfirmAccount(token);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Confirm account error: {ex}");
+                return new BaseResponseDto<LoginResponseDto>()
+                    .GenerateGeneralFailedResponse(ex.ToString());
+            }
+        }
     }
 }

@@ -1,3 +1,27 @@
 .card {
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
 }
+
+.btn-primary {
+  border-bottom: 5px solid var(--color-primary-dark);
+}
+
+.btn-success {
+  border-bottom: 5px solid var(--color-success-dark);
+}
+
+.btn-danger {
+  border-bottom: 5px solid var(--color-danger-dark);
+}
+
+.btn-warning {
+  border-bottom: 5px solid var(--color-warning-dark);
+}
+
+.btn:active {
+  border-bottom: 1px solid transparent;
+}
+
+.btn:disabled {
+  border-bottom: 1px solid transparent;
+}

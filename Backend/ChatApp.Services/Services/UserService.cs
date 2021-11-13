@@ -4,6 +4,7 @@ using AutoMapper;
 using ChatApp.DataAccess;
 using ChatApp.Dtos.Common;
 using ChatApp.Dtos.Models.Auths;
+using ChatApp.Dtos.Models.Emails;
 using ChatApp.Dtos.Models.Users;
 using ChatApp.Entities.Models;
 using ChatApp.Services.IServices;
@@ -24,19 +25,22 @@ namespace ChatApp.Services.Services
         private readonly ILogger<UserService> _logger;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
+        private readonly IEmailService _emailService;
 
         public UserService(
             IHttpContextAccessor httpContextAccessor,
             IUnitOfWork unitOfWork,
             ILogger<UserService> logger,
             IMapper mapper,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IEmailService emailService)
         {
             _httpContextAccessor = httpContextAccessor;
             _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
             _configuration = configuration;
+            _emailService = emailService;
         }
 
         public async Task<BaseResponseDto<bool>> Insert(InsertUserDto insertUserDto)
@@ -99,7 +103,7 @@ namespace ChatApp.Services.Services
 
             var hashCurrentPassword = changePasswordRequestDto.CurrentPassword.HashMd5();
 
-            var userId = _httpContextAccessor.HttpContext.Items[RequestKeys.UserId].ToString();
+            var userId = _httpContextAccessor.HttpContext.UserId();
 
             var builder = MongoExtension.GetBuilders<User>();
             var userRepo = _unitOfWork.GetRepository<User>();
@@ -116,9 +120,7 @@ namespace ChatApp.Services.Services
                 return new BaseResponseDto<ChangePasswordResponseDto>().GenerateFailedResponse(ErrorCodes.AccountHasNotBeenConfirmed);
             }
 
-            var isGoogleLogin = Convert.ToBoolean(_httpContextAccessor.HttpContext.Items[RequestKeys.IsGoogleLogin]);
-
-            if (!isGoogleLogin && user.Password != hashCurrentPassword)
+            if (!_httpContextAccessor.HttpContext.IsGoogleLogin() && user.Password != hashCurrentPassword)
             {
                 _logger.LogError("Incorrect password");
                 return new BaseResponseDto<ChangePasswordResponseDto>().GenerateFailedResponse(ErrorCodes.IncorrectCurrentPassword);
@@ -140,9 +142,80 @@ namespace ChatApp.Services.Services
             });
         }
 
-        public Task<BaseResponseDto<bool>> SendAccountConfirmation(string email)
+        public async Task<BaseResponseDto<bool>> SendAccountConfirmation()
         {
-            throw new NotImplementedException();
+            var userId = _httpContextAccessor.HttpContext.UserId();
+            var userRepo = _unitOfWork.GetRepository<User>();
+
+            var userQuery = MongoExtension.GetBuilders<User>()
+                .Regex(x => x.Id, userId);
+
+            var user = await userRepo.FirstOrDefault(userQuery);
+            if (user == null)
+            {
+                _logger.LogError("user is null");
+                return new BaseResponseDto<bool>().GenerateFailedResponse(ErrorCodes.NotFound);
+            }
+
+            var result = await _emailService.Send(new EmailDto
+            {
+                Title = EmailTemplates.ConfirmAccountTitle,
+                Address = user.Email,
+                Content = EmailTemplates.ConfirmAccountBody
+                    .Replace("#name#", user.FirstName)
+                    .Replace("#link#", $"{_configuration[AppSettingKeys.FrontEndHost]}/confirm-account/{user.ConfirmationToken}")
+            });
+
+            return new BaseResponseDto<bool>().GenerateSuccessResponse(result);
+        }
+
+        public async Task<BaseResponseDto<LoginResponseDto>> ConfirmAccount(string token)
+        {
+            var userRepo = _unitOfWork.GetRepository<User>();
+
+            var userQuery = MongoExtension.GetBuilders<User>()
+                .Regex(x => x.ConfirmationToken, token);
+
+            var user = await userRepo.FirstOrDefault(userQuery);
+
+            if (user == null)
+            {
+                _logger.LogError($"Unable to find any user with this confirmation token: {token}");
+                return new BaseResponseDto<LoginResponseDto>()
+                    .GenerateFailedResponse(ErrorCodes.NotFound);
+            }
+
+            var jwtSetting = GetJwtSetting();
+
+            LoginResponseDto loginResponseDto;
+
+            if (user.IsConfirmed)
+            {
+                loginResponseDto = new LoginResponseDto
+                {
+                    User = _mapper.Map<UserResponseDto>(user),
+                    Token = user.GenerateAccessToken(jwtSetting, true)
+                };
+
+                return new BaseResponseDto<LoginResponseDto>().GenerateSuccessResponse(loginResponseDto);
+            }
+
+            user.IsConfirmed = true;
+            user.ConfirmationToken = null;
+
+            var updateDefinition = new UpdateDefinitionBuilder<User>()
+                .Set(x => x.IsConfirmed, user.IsConfirmed)
+                .Set(x => x.ConfirmationToken, user.ConfirmationToken);
+
+            await userRepo.UpdatePartial(user, updateDefinition);
+
+            loginResponseDto = new LoginResponseDto
+            {
+                User = _mapper.Map<UserResponseDto>(user),
+                Token = user.GenerateAccessToken(jwtSetting)
+            };
+
+            return new BaseResponseDto<LoginResponseDto>().GenerateSuccessResponse(loginResponseDto);
         }
 
         private JwtSettingDto GetJwtSetting()

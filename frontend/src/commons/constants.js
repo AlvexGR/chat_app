@@ -26,7 +26,7 @@ const routing = {
   LOGIN: "/login",
   GOOGLE_LOGIN_REDIRECT: "/google-login-redirect",
   REGISTER: "/register",
-  ACCOUNT_CONFIRMATION: "/account-confirmation/:token",
+  ACCOUNT_CONFIRMATION: "/confirm-account/:token",
   FORGOT_PASSWORD: "/forgot-password",
   ADMIN: "/admin",
   ADMINS: {
@@ -43,7 +43,7 @@ const roles = {
 
 const regexPatterns = {
   PASSWORD: /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{7,})/,
-  EMAIL: /\S+@\S+\.\S+/,
+  EMAIL: /^[^@\s]+@[^@\s]+\.[^@\s\W]+$/,
 };
 
 export const constants = {

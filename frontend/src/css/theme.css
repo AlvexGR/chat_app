@@ -12,6 +12,12 @@
 
 /* Color */
 :root {
+  --color-primary: #0d6efd;
+  --color-primary-dark: #0A58CA;
   --color-danger: #dc3545;
+  --color-danger-dark: #B02A37;
   --color-success: #198754;
+  --color-success-dark: #146C43;
+  --color-warning: #ffc107;
+  --color-warning-dark: #997404;
 }

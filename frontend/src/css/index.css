@@ -9,3 +9,11 @@ body {
   font-family: Roboto, Arial, Helvetica !important;
   font-size: 15px !important;
 }
+
+.col-m-450 {
+  min-width: 450px;
+}
+
+.col-m-500 {
+  min-width: 500px;
+}

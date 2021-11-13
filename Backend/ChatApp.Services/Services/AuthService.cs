@@ -14,7 +14,6 @@ using ChatApp.Utilities.Extensions;
 using Google.Apis.Auth;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using MongoDB.Driver;
 
 namespace ChatApp.Services.Services
 {
@@ -112,10 +111,11 @@ namespace ChatApp.Services.Services
 
             await _emailService.Send(new EmailDto
             {
-                Title = "Welcome to my Chat App. Please confirm your account!",
+                Title = EmailTemplates.ConfirmAccountTitle,
                 Address = user.Email,
-                Content =
-                    $"Please click on the following link to confirm your account: {_configuration[AppSettingKeys.FrontEndHost]}/confirm-account/{user.ConfirmationToken}"
+                Content = EmailTemplates.ConfirmAccountBody
+                    .Replace("#name#", user.FirstName)
+                    .Replace("#link#", $"{_configuration[AppSettingKeys.FrontEndHost]}/confirm-account/{user.ConfirmationToken}")
             });
 
             return await Login(new LoginRequestDto
@@ -172,53 +172,6 @@ namespace ChatApp.Services.Services
             {
                 User = _mapper.Map<UserResponseDto>(user),
                 Token = user.GenerateAccessToken(jwtSetting)
-            };
-
-            return new BaseResponseDto<LoginResponseDto>().GenerateSuccessResponse(loginResponseDto);
-        }
-
-        public async Task<BaseResponseDto<LoginResponseDto>> ConfirmAccount(string token)
-        {
-            var userRepo = _unitOfWork.GetRepository<User>();
-
-            var userQuery = MongoExtension.GetBuilders<User>()
-                .Regex(x => x.ConfirmationToken, token);
-
-            var user = await userRepo.FirstOrDefault(userQuery);
-
-            if (user == null)
-            {
-                _logger.LogError($"Unable to find any user with this confirmation token: {token}");
-                return new BaseResponseDto<LoginResponseDto>()
-                    .GenerateFailedResponse(ErrorCodes.NotFound);
-            }
-
-            var jwtSetting = GetJwtSetting();
-
-            LoginResponseDto loginResponseDto;
-
-            if (user.IsConfirmed)
-            {
-                loginResponseDto = new LoginResponseDto
-                {
-                    User = _mapper.Map<UserResponseDto>(user),
-                    Token = user.GenerateAccessToken(jwtSetting, true)
-                };
-
-                return new BaseResponseDto<LoginResponseDto>().GenerateSuccessResponse(loginResponseDto);
-            }
-
-            user.IsConfirmed = true;
-
-            var updateDefinition = new UpdateDefinitionBuilder<User>()
-                .Set(x => x.IsConfirmed, user.IsConfirmed);
-
-            await userRepo.UpdatePartial(user, updateDefinition);
-
-            loginResponseDto = new LoginResponseDto
-            {
-                User = _mapper.Map<UserResponseDto>(user),
-                Token = user.GenerateAccessToken(jwtSetting, true)
             };
 
             return new BaseResponseDto<LoginResponseDto>().GenerateSuccessResponse(loginResponseDto);

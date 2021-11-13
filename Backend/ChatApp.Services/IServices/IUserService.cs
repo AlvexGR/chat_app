@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using ChatApp.Dtos.Common;
+using ChatApp.Dtos.Models.Auths;
 using ChatApp.Dtos.Models.Users;
 
 namespace ChatApp.Services.IServices
@@ -10,6 +11,8 @@ namespace ChatApp.Services.IServices
 
         Task<BaseResponseDto<ChangePasswordResponseDto>> ChangePassword(ChangePasswordRequestDto changePasswordRequestDto);
 
-        Task<BaseResponseDto<bool>> SendAccountConfirmation(string email);
+        Task<BaseResponseDto<bool>> SendAccountConfirmation();
+
+        Task<BaseResponseDto<LoginResponseDto>> ConfirmAccount(string token);
     }
 }

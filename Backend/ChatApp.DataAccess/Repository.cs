@@ -13,7 +13,7 @@ namespace ChatApp.DataAccess
     public class Repository<TDocument> : IRepository<TDocument> where TDocument : BaseModel
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private string CurrentUserId => _httpContextAccessor.HttpContext?.Items[RequestKeys.UserId]?.ToString()
+        private string CurrentUserId => _httpContextAccessor.HttpContext?.UserId()
                                         ?? GlobalConstants.DefaultUser;
 
         public IMongoCollection<TDocument> Collection { get; }
