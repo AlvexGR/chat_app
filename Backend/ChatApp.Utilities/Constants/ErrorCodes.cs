@@ -8,6 +8,8 @@
 
         public const string EmailExists = "EMAIL_EXISTS";
 
+        public const string EmailNotExists = "EMAIL_NOT_EXISTS";
+
         public const string NotFound = "BAD_REQUEST";
 
         public const string InvalidCredential = "INVALID_CREDENTIAL";

@@ -22,6 +22,10 @@ const googleLogin = async (token) => {
   });
 };
 
+const forgotPassword = async (email) => {
+  return await apiService.httpPost(`${BASE_URL}/${API_VERSION}/forgot-password/${email}`, {});
+}
+
 const logout = () => {
   localStorageService.removeKey(constants.storeKeys.LOGIN_USER);
   localStorageService.removeKey(constants.storeKeys.ACCESS_TOKEN);
@@ -77,4 +81,5 @@ export const authService = {
   getEmail,
   getId,
   isAdmin,
+  forgotPassword
 };

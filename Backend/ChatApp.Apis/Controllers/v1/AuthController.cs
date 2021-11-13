@@ -72,5 +72,21 @@ namespace ChatApp.Apis.Controllers.v1
                     .GenerateGeneralFailedResponse(ex.ToString());
             }
         }
+
+        [HttpPost]
+        [Route("forgot-password/{email}")]
+        public async Task<BaseResponseDto<bool>> ForgotPassword(string email)
+        {
+            try
+            {
+                return await _authService.ForgotPassword(email);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Forgot password error: {ex}");
+                return new BaseResponseDto<bool>()
+                    .GenerateGeneralFailedResponse(ex.ToString());
+            }
+        }
     }
 }

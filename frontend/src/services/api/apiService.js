@@ -25,7 +25,7 @@ axios.interceptors.response.use(
   },
   (error) => {
     let message =
-      messages.errorMessage[
+      messages.errorMessages[
         messages.errorCodes.INTERNAL_SERVER_ERROR
       ];
     if (error.response && error.response.status) {

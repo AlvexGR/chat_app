@@ -19,9 +19,11 @@
 }
 
 .btn:active {
+  border-top: 5px solid transparent;
   border-bottom: 1px solid transparent;
 }
 
 .btn:disabled {
+  border-top: 5px solid transparent;
   border-bottom: 1px solid transparent;
 }

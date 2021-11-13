@@ -3,6 +3,7 @@ import { useHistory, useParams } from "react-router";
 import { constants } from "../../commons/constants";
 import { userService } from "../../services/api/userService";
 import { localStorageService } from "../../services/app/localStorageService";
+import "./accountConfirmation.css";
 
 const AccountConfirmation = () => {
   const { token } = useParams();
@@ -103,8 +104,8 @@ const AccountConfirmation = () => {
 
   return (
     <div className="row vh-100">
-      <div className="col-lg-6 mx-auto my-auto">
-        <div className="card">
+      <div className="col-lg-6 ac-box mx-auto my-auto">
+        <div className="card px-3 py-3">
           <div className="card-body">
             <h4 className="align-center">Account confirmation</h4>
             <Status />

@@ -14,6 +14,7 @@ using ChatApp.Utilities.Extensions;
 using Google.Apis.Auth;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using MongoDB.Driver;
 
 namespace ChatApp.Services.Services
 {
@@ -175,6 +176,46 @@ namespace ChatApp.Services.Services
             };
 
             return new BaseResponseDto<LoginResponseDto>().GenerateSuccessResponse(loginResponseDto);
+        }
+
+        public async Task<BaseResponseDto<bool>> ForgotPassword(string email)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                return new BaseResponseDto<bool>()
+                    .GenerateFailedResponse(ErrorCodes.BadRequest);
+            }
+
+            var userRepo = _unitOfWork.GetRepository<User>();
+
+            var queryBuilder = MongoExtension.GetBuilders<User>();
+            var userQuery = queryBuilder
+                .Regex(x => x.Email, email.MongoIgnoreCase());
+            var user = await userRepo.FirstOrDefault(userQuery);
+
+            if (user == null)
+            {
+                return new BaseResponseDto<bool>()
+                    .GenerateFailedResponse(ErrorCodes.EmailExists);
+            }
+
+            var newPassword = 8.GenerateRandomPassword();
+            user.Password = newPassword.HashMd5();
+            var updateDefinition = new UpdateDefinitionBuilder<User>()
+                .Set(x => x.Password, user.Password);
+
+            await userRepo.UpdatePartial(user, updateDefinition);
+
+            var result = await _emailService.Send(new EmailDto
+            {
+                Title = EmailTemplates.ForgotPasswordTitle,
+                Address = user.Email,
+                Content = EmailTemplates.ForgotPasswordBody
+                    .Replace("#name#", user.FirstName)
+                    .Replace("#password#", newPassword)
+            });
+
+            return new BaseResponseDto<bool>().GenerateSuccessResponse(result);
         }
 
         private JwtSettingDto GetJwtSetting()
