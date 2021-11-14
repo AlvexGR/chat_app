@@ -2,7 +2,7 @@
 
 namespace ChatApp.Services.Services
 {
-    public class FriendShipService : IFriendShipService
+    public class FriendService : IFriendService
     {
     }
 }

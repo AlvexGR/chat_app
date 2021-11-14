@@ -1,8 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using ChatApp.DataAccess;
 using ChatApp.Dtos.Models.Chats;
+using ChatApp.Entities.Enums;
+using ChatApp.Entities.Models;
 using ChatApp.Services.IServices;
 using ChatApp.Utilities.Constants;
+using ChatApp.Utilities.Extensions;
 using Microsoft.AspNetCore.SignalR;
 
 namespace ChatApp.Apis.Hubs.v1
@@ -10,12 +14,12 @@ namespace ChatApp.Apis.Hubs.v1
     public class ChatHub : BaseHub
     {
         private readonly IUserService _userService;
-        private readonly IFriendShipService _friendShipService;
+        private readonly IFriendService _friendShipService;
         private readonly IUnitOfWork _unitOfWork;
 
         public ChatHub(IAuthService authService,
             IUserService userService,
-            IFriendShipService friendShipService,
+            IFriendService friendShipService,
             IUnitOfWork unitOfWork)
             : base(authService)
         {
@@ -24,14 +28,27 @@ namespace ChatApp.Apis.Hubs.v1
             _unitOfWork = unitOfWork;
         }
 
-        public async Task SendMessage(ChatMessageDto messageDto)
+        public async Task SendMessage(string user, string message)
         {
-            var user = _userService.Get(messageDto.ReceiverId);
-            if (user == null) return;
+            var chatMessageRepo = _unitOfWork.GetRepository<ChatMessage>();
+            await chatMessageRepo.Insert(new ChatMessage
+            {
+                SenderId = Context.GetHttpContext().UserId(),
+                ReceiverId = Context.GetHttpContext().UserId(),
+                MessageType = MessageType.Message,
+                ReceiverType = ReceiverType.Private,
+                Message = message
+            });
 
-            // TODO: Check friendship
-
-            await Clients.All.SendAsync(HubMethods.ReceiveMessage);
+            var allMessages = await chatMessageRepo.FindAll();
+            await Clients.All.SendAsync(HubMethods.ReceiveMessage, user, message);
         }
+
+        //public async Task SendMessage(ChatMessageDto messageDto)
+        //{
+        //    // TODO: Check friendship
+
+        //    await Clients.All.SendAsync(HubMethods.ReceiveMessage);
+        //}
     }
 }

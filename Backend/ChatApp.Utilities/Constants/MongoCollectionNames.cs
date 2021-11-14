@@ -5,14 +5,18 @@ namespace ChatApp.Utilities.Constants
 {
     public static class MongoCollectionNames
     {
-        private static Dictionary<string, string> _collectionName = new Dictionary<string, string>
+        private static readonly Dictionary<string, string> CollectionName = new()
         {
-            { nameof(User), "Users" }
+            { nameof(User), "Users" },
+            { nameof(Group), "Groups" },
+            { nameof(Friend), "Friends" },
+            { nameof(FriendRequest), "FriendRequests" },
+            { nameof(ChatMessage), "ChatMessages" },
         };
 
         public static string Get(string name)
         {
-            return _collectionName[name];
+            return CollectionName[name];
         }
     }
 }

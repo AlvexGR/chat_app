@@ -34,6 +34,18 @@ namespace ChatApp.DataAccess
             Collection = database.GetCollection<TDocument>(MongoCollectionNames.Get(typeof(TDocument).Name));
         }
 
+        public async Task<IEnumerable<TDocument>> FindAll()
+        {
+            var filter = MongoExtension.GetBuilders<TDocument>().Ne(x => x.IsDeleted, true);
+            return await(await Collection.FindAsync(filter)).ToListAsync();
+        }
+
+        public async Task<IEnumerable<TDocument>> Find(FilterDefinition<TDocument> filter, FindOptions<TDocument, TDocument> options = null)
+        {
+            filter &= MongoExtension.GetBuilders<TDocument>().Ne(x => x.IsDeleted, true);
+            return await(await Collection.FindAsync(filter, options)).ToListAsync();
+        }
+
         public async Task<long> Count(FilterDefinition<TDocument> filter, CountOptions options = null)
         {
             filter &= MongoExtension.GetBuilders<TDocument>().Ne(x => x.IsDeleted, true);
@@ -50,12 +62,6 @@ namespace ChatApp.DataAccess
         {
             filter &= MongoExtension.GetBuilders<TDocument>().Ne(x => x.IsDeleted, true);
             return await (await Collection.FindAsync(filter, options)).FirstOrDefaultAsync();
-        }
-
-        public async Task<IEnumerable<TDocument>> Current(FilterDefinition<TDocument> filter, FindOptions<TDocument, TDocument> options = null)
-        {
-            filter &= MongoExtension.GetBuilders<TDocument>().Ne(x => x.IsDeleted, true);
-            return (await Collection.FindAsync(filter, options)).Current;
         }
 
         public async Task Insert(TDocument entity)

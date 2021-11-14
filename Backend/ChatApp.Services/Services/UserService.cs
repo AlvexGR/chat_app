@@ -72,7 +72,7 @@ namespace ChatApp.Services.Services
             var user = _mapper.Map<User>(insertUserDto);
 
             user.Password = user.Password.HashMd5();
-            user.Role = UserRole.User.ToInt();
+            user.Role = UserRole.User;
 
             await userRepo.Insert(user);
 

@@ -1,4 +1,5 @@
 ﻿using ChatApp.Entities.Common;
+using ChatApp.Entities.Enums;
 
 namespace ChatApp.Entities.Models
 {
@@ -12,7 +13,7 @@ namespace ChatApp.Entities.Models
 
         public string Password { get; set; }
 
-        public int Role { get; set; }
+        public UserRole Role { get; set; }
 
         public bool IsConfirmed { get; set; }
 

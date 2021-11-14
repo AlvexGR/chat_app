@@ -66,17 +66,5 @@ namespace ChatApp.Apis.Filters
                 context.Result = new UnauthorizedResult();
             }
         }
-
-        private static bool FilterClaim(Claim claim, string claimType)
-        {
-            var map = JwtSecurityTokenHandler.DefaultInboundClaimTypeMap;
-
-            if (map.TryGetValue(claim.Type, out var mapped))
-            {
-                return mapped == claimType;
-            }
-
-            return false;
-        }
     }
 }

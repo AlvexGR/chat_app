@@ -13,6 +13,7 @@ const Chat = () => {
   const [chatHub, setChatHub] = useState(null);
   const [toSendMessage, setToSendMessage] = useState("");
 
+  // TODO: Refactor to Layout and use props
   const initConnection = async () => {
     const connection = new HubConnectionBuilder()
       .withUrl(`${PROTOCOL}://${BASE_URL}/${HUB_VERSION}/chat`, {
@@ -27,7 +28,6 @@ const Chat = () => {
   const startConnection = async (connection) => {
     try {
       await connection.start();
-      console.log("SignalR Connected.");
       setConnected(true);
       setChatHub(connection);
       listenToHub(connection);

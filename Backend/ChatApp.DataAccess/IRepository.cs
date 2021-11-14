@@ -9,13 +9,15 @@ namespace ChatApp.DataAccess
     {
         IMongoCollection<TDocument> Collection { get; }
 
+        Task<IEnumerable<TDocument>> FindAll();
+
+        Task<IEnumerable<TDocument>> Find(FilterDefinition<TDocument> filter, FindOptions<TDocument, TDocument> options = null);
+
         Task<long> Count(FilterDefinition<TDocument> filter, CountOptions options = null);
 
         Task<TDocument> First(FilterDefinition<TDocument> filter, FindOptions<TDocument, TDocument> options = null);
 
         Task<TDocument> FirstOrDefault(FilterDefinition<TDocument> filter, FindOptions<TDocument, TDocument> options = null);
-
-        Task<IEnumerable<TDocument>> Current(FilterDefinition<TDocument> filter, FindOptions<TDocument, TDocument> options = null);
 
         Task Insert(TDocument entity);
 

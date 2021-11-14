@@ -1,6 +1,6 @@
 ﻿namespace ChatApp.Services.IServices
 {
-    public interface IFriendShipService
+    public interface IFriendService
     {
     }
 }

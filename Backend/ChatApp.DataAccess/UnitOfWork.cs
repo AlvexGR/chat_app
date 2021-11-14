@@ -26,7 +26,7 @@ namespace ChatApp.DataAccess
             if (!_repositories.ContainsKey(type))
             {
                 _repositories[type] = new Repository<TDocument>(
-                    _configuration.GetConnectionString("ChatAppDb"), 
+                    _configuration.GetConnectionString("ChatAppDb"),
                     _httpContextAccessor);
             }
 

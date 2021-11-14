@@ -110,7 +110,7 @@ namespace ChatApp.Services.Services
             user.Email = user.Email.Trim();
             user.Password = user.Password.HashMd5();
             user.ConfirmationToken = Guid.NewGuid().ToString().HashMd5();
-            user.Role = UserRole.User.ToInt();
+            user.Role = UserRole.User;
 
             await userRepo.Insert(user);
 
@@ -158,7 +158,7 @@ namespace ChatApp.Services.Services
                     Email = payload.Email,
                     FirstName = payload.GivenName,
                     LastName = payload.FamilyName,
-                    Role = UserRole.User.ToInt(),
+                    Role = UserRole.User,
                     GooglePassword = Guid.NewGuid().ToString().HashMd5()
                 };
 
