@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using ChatApp.Utilities.Constants;
-using ChatApp.Utilities.Enums;
+using ChatApp.Entities.Enums;
 using ChatApp.Utilities.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;

@@ -35,7 +35,7 @@ const AccountConfirmation = () => {
 
     localStorageService.setValue(
       constants.storeKeys.LOGIN_USER,
-      result.data.user
+      JSON.stringify(result.data.user)
     );
     localStorageService.setValue(
       constants.storeKeys.ACCESS_TOKEN,
@@ -73,7 +73,12 @@ const AccountConfirmation = () => {
               connect and chat with your friends
             </div>
             <div className="horizontal-center mt-2">
-              <button className="btn btn-primary px-4">Continue</button>
+              <button
+                className="btn btn-primary px-4"
+                onClick={() => history.push(constants.routing.HOME)}
+              >
+                Continue
+              </button>
             </div>
           </div>
         );

@@ -14,5 +14,7 @@ namespace ChatApp.Services.IServices
         Task<BaseResponseDto<bool>> SendAccountConfirmation();
 
         Task<BaseResponseDto<LoginResponseDto>> ConfirmAccount(string token);
+
+        Task<UserDto> Get(string userId);
     }
 }

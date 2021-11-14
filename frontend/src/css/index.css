@@ -17,3 +17,7 @@ body {
 .col-m-500 {
   min-width: 500px;
 }
+
+.pre-line {
+  white-space: pre-line;
+}

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { constants } from "../../commons/constants";
 import { authService } from "../../services/api/authService";
 import { localStorageService } from "../../services/app/localStorageService";
@@ -9,6 +9,8 @@ import "./login.css";
 const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
 const Login = () => {
+  const history = useHistory();
+
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
   const [password, setPassword] = useState("");
@@ -47,13 +49,13 @@ const Login = () => {
     if (!result || !result.success) return;
     localStorageService.setValue(
       constants.storeKeys.LOGIN_USER,
-      result.data.user
+      JSON.stringify(result.data.user)
     );
     localStorageService.setValue(
       constants.storeKeys.ACCESS_TOKEN,
       result.data.token
     );
-    // TODO: Navigate
+    history.push(constants.routing.HOME);
   };
 
   return (

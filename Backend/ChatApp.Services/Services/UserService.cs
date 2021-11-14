@@ -9,7 +9,7 @@ using ChatApp.Dtos.Models.Users;
 using ChatApp.Entities.Models;
 using ChatApp.Services.IServices;
 using ChatApp.Utilities.Constants;
-using ChatApp.Utilities.Enums;
+using ChatApp.Entities.Enums;
 using ChatApp.Utilities.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -148,7 +148,7 @@ namespace ChatApp.Services.Services
             var userRepo = _unitOfWork.GetRepository<User>();
 
             var userQuery = MongoExtension.GetBuilders<User>()
-                .Regex(x => x.Id, userId);
+                .Eq(x => x.Id, userId);
 
             var user = await userRepo.FirstOrDefault(userQuery);
             if (user == null)
@@ -189,7 +189,7 @@ namespace ChatApp.Services.Services
             var userRepo = _unitOfWork.GetRepository<User>();
 
             var userQuery = MongoExtension.GetBuilders<User>()
-                .Regex(x => x.ConfirmationToken, token);
+                .Regex(x => x.ConfirmationToken, token.MongoIgnoreCase());
 
             var user = await userRepo.FirstOrDefault(userQuery);
 
@@ -231,6 +231,17 @@ namespace ChatApp.Services.Services
             };
 
             return new BaseResponseDto<LoginResponseDto>().GenerateSuccessResponse(loginResponseDto);
+        }
+
+        public async Task<UserDto> Get(string userId)
+        {
+            var userRepo = _unitOfWork.GetRepository<User>();
+
+            var userQuery = MongoExtension.GetBuilders<User>()
+                .Eq(x => x.Id, userId);
+
+            var user = await userRepo.FirstOrDefault(userQuery);
+            return user != null ? _mapper.Map<UserDto>(user) : null;
         }
 
         private JwtSettingDto GetJwtSetting()

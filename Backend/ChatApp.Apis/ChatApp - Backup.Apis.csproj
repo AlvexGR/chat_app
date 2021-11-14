@@ -24,4 +24,8 @@
     <ProjectReference Include="..\ChatApp.Services\ChatApp.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Hubs\NewFolder\" />
+  </ItemGroup>
+
 </Project>

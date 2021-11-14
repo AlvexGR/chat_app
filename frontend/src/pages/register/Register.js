@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { constants } from "../../commons/constants";
 import { messages } from "../../commons/messages";
 import { storeActions } from "../../commons/storeActions";
@@ -10,6 +10,7 @@ import "./register.css";
 
 const Register = () => {
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const [firstName, setFirstName] = useState("");
   const [firstNameError, setFirstNameError] = useState("");
@@ -85,10 +86,9 @@ const Register = () => {
     setIsLoading(false);
 
     if (!result || !result.success) return;
-    console.log(result.data);
     localStorageService.setValue(
       constants.storeKeys.LOGIN_USER,
-      result.data.user
+      JSON.stringify(result.data.user)
     );
     localStorageService.setValue(
       constants.storeKeys.ACCESS_TOKEN,
@@ -102,6 +102,8 @@ const Register = () => {
         message: messages.successMessages.REGISTER,
       },
     });
+
+    history.push(constants.routing.HOME);
   };
 
   return (
@@ -201,7 +203,11 @@ const Register = () => {
               </p>
             </div>
             <div className="d-grid mb-3">
-              <button className="btn btn-success" onClick={register} disabled={isLoading}>
+              <button
+                className="btn btn-success"
+                onClick={register}
+                disabled={isLoading}
+              >
                 <i className="fas fa-user-plus me-2"></i>Register
               </button>
             </div>

@@ -1,4 +1,7 @@
 ﻿using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using ChatApp.DataAccess;
@@ -9,11 +12,12 @@ using ChatApp.Dtos.Models.Users;
 using ChatApp.Entities.Models;
 using ChatApp.Services.IServices;
 using ChatApp.Utilities.Constants;
-using ChatApp.Utilities.Enums;
+using ChatApp.Entities.Enums;
 using ChatApp.Utilities.Extensions;
 using Google.Apis.Auth;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 
 namespace ChatApp.Services.Services
@@ -172,7 +176,7 @@ namespace ChatApp.Services.Services
             loginResponseDto = new LoginResponseDto
             {
                 User = _mapper.Map<UserResponseDto>(user),
-                Token = user.GenerateAccessToken(jwtSetting)
+                Token = user.GenerateAccessToken(jwtSetting, true)
             };
 
             return new BaseResponseDto<LoginResponseDto>().GenerateSuccessResponse(loginResponseDto);
@@ -216,6 +220,44 @@ namespace ChatApp.Services.Services
             });
 
             return new BaseResponseDto<bool>().GenerateSuccessResponse(result);
+        }
+
+        public async Task<(JwtSecurityToken token, UserDto user)> VerifyAuthToken(string token)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            var jwtToken = handler.ReadJwtToken(token);
+
+            var userId = jwtToken.Claims
+                .First(x => x.Type == UserClaimTypes.UserId)
+                .Value;
+
+            var builder = MongoExtension.GetBuilders<User>();
+            var user = await _unitOfWork
+                .GetRepository<User>()
+                .FirstOrDefault(builder.Eq(x => x.Id, userId));
+            if (user == null) throw new Exception("User is null");
+
+            var isGoogleLogin = Convert.ToBoolean(jwtToken.Claims
+                .First(x => x.Type == UserClaimTypes.IsGoogleLogin)
+                .Value);
+
+            var key = Encoding.ASCII.GetBytes(
+                !isGoogleLogin
+                    ? user.Password
+                    : user.GooglePassword);
+
+            tokenHandler.ValidateToken(token, new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ClockSkew = TimeSpan.Zero
+            }, out _);
+
+            return (jwtToken, _mapper.Map<UserDto>(user));
         }
 
         private JwtSettingDto GetJwtSetting()

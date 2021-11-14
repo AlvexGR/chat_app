@@ -11,5 +11,7 @@
         public const string UserRole = "Role";
 
         public const string IsGoogleLogin = "IsGoogleLogin";
+
+        public const string AccessToken = "access_token";
     }
 }

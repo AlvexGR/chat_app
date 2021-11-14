@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { constants } from "./commons/constants";
+import Auth from "./components/auth/Auth";
 import Toaster from "./components/toaster/Toaster";
 
 const loading = (
@@ -12,10 +13,15 @@ const loading = (
 const Login = React.lazy(() => import("./pages/login/Login"));
 const GoogleLogin = React.lazy(() => import("./pages/login/GoogleLogin"));
 const Register = React.lazy(() => import("./pages/register/Register"));
-const AccountConfirmation = React.lazy(() => import("./pages/accountConfirmation/AccountConfirmation"));
-const ForgotPassword = React.lazy(() => import("./pages/forgotPassword/ForgotPassword"));
+const AccountConfirmation = React.lazy(() =>
+  import("./pages/accountConfirmation/AccountConfirmation")
+);
+const ForgotPassword = React.lazy(() =>
+  import("./pages/forgotPassword/ForgotPassword")
+);
 const Forbidden = React.lazy(() => import("./pages/forbidden/Forbidden"));
 const NotFound = React.lazy(() => import("./pages/notFound/NotFound"));
+const Layout = React.lazy(() => import("./layouts/Layout"));
 
 function App() {
   return (
@@ -59,11 +65,12 @@ function App() {
               name="Forbidden"
               render={(props) => <Forbidden {...props} />}
             />
-            {/* <Route
+            <Route
+              exact
               path={constants.routing.HOME}
               name="Home"
-              render={(props) => <TheLayout {...props} />}
-            /> */}
+              render={(props) => <Auth component={<Layout {...props} />} />}
+            />
             <Route
               path={constants.routing.NOT_FOUND}
               name="Not found"

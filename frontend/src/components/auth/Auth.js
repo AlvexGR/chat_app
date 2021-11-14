@@ -15,7 +15,7 @@ const Auth = (props) => {
         skipCounter: true,
         ...{
           authorized: true,
-          isAdmin: authService.isAdmin()
+          isAdmin: authService.isAdmin(),
         },
       });
       return;
@@ -24,6 +24,7 @@ const Auth = (props) => {
       history.push(constants.routing.LOGIN);
       return;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.authReducer.counter]);
 
   return props.component;

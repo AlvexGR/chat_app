@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ChatApp.DataAccess;
 using ChatApp.Entities.Models;
+using ChatApp.Services.IServices;
 using ChatApp.Utilities.Constants;
 using ChatApp.Utilities.Extensions;
 using Microsoft.AspNetCore.Authorization;
@@ -20,11 +21,13 @@ namespace ChatApp.Apis.Filters
     {
         private readonly ILogger<AuthFilter> _logger;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IAuthService _authService;
 
-        public AuthFilter(ILogger<AuthFilter> logger, IUnitOfWork unitOfWork)
+        public AuthFilter(ILogger<AuthFilter> logger, IUnitOfWork unitOfWork, IAuthService authService)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
+            _authService = authService;
         }
 
         public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
@@ -46,42 +49,11 @@ namespace ChatApp.Apis.Filters
                     return;
                 }
 
-                var handler = new JwtSecurityTokenHandler();
-                var tokenHandler = new JwtSecurityTokenHandler();
-
-                var token = handler.ReadJwtToken(authorization[1]);
-
-                var userId = token.Claims
-                    .First(x => x.Type == UserClaimTypes.UserId)
-                    .Value;
-
-                var builder = MongoExtension.GetBuilders<User>();
-                var user = await _unitOfWork
-                    .GetRepository<User>()
-                    .FirstOrDefault(builder.Eq(x => x.Id, userId));
-                if (user == null)
-                {
-                    context.Result = new UnauthorizedResult();
-                    return;
-                }
+                var (token, user) = await _authService.VerifyAuthToken(authorization[1]);
 
                 var isGoogleLogin = Convert.ToBoolean(token.Claims
                     .First(x => x.Type == UserClaimTypes.IsGoogleLogin)
                     .Value);
-
-                var key = Encoding.ASCII.GetBytes(
-                    !isGoogleLogin
-                        ? user.Password
-                        : user.GooglePassword);
-
-                tokenHandler.ValidateToken(authorization[1], new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    ClockSkew = TimeSpan.Zero
-                }, out _);
 
                 context.HttpContext.Items[RequestKeys.UserId] = user.Id;
                 context.HttpContext.Items[RequestKeys.UserEmail] = user.Email;

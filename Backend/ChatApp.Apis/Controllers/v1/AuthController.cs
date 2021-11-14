@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 namespace ChatApp.Apis.Controllers.v1
 {
     [AllowAnonymous]
-    [Route("api/auth/v1")]
+    [Route("api/v1/auth")]
     public class AuthController : BaseController
     {
         private readonly ILogger<AuthController> _logger;

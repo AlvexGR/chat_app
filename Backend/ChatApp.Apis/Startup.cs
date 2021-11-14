@@ -1,11 +1,11 @@
 using ChatApp.Apis.Filters;
 using ChatApp.Apis.Mappers;
 using ChatApp.Apis.Registers;
-using ChatApp.SignalR.Registers;
 using ChatApp.Utilities.Constants;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -73,12 +73,14 @@ namespace ChatApp.Apis
             app.UseRouting();
 
             app.UseCors(x => x
-                .AllowAnyOrigin()
+                .AllowCredentials()
+                .WithOrigins(Configuration[AppSettingKeys.FrontEndHost])
                 .AllowAnyMethod()
                 .AllowAnyHeader());
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapSignalRHubs();
                 endpoints.MapControllers();
             });
         }

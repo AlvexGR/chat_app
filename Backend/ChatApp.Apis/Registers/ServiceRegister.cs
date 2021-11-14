@@ -12,6 +12,7 @@ namespace ChatApp.Apis.Registers
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IFriendShipService, FriendShipService>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
         }

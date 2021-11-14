@@ -1,4 +1,4 @@
-﻿namespace ChatApp.Utilities.Enums
+﻿namespace ChatApp.Entities.Enums
 {
     public enum UserRole
     {

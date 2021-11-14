@@ -13,7 +13,6 @@ const GoogleLogin = () => {
   const [googleToken] = useState(query.get("id_token"));
 
   useEffect(() => {
-    console.log(googleToken);
     if (!googleToken) history.push(constants.routing.LOGIN);
     googleLogin(googleToken);
 
@@ -28,14 +27,14 @@ const GoogleLogin = () => {
     }
     localStorageService.setValue(
       constants.storeKeys.LOGIN_USER,
-      result.data.user
+      JSON.stringify(result.data.user)
     );
     localStorageService.setValue(
       constants.storeKeys.ACCESS_TOKEN,
       result.data.token
     );
 
-    history.push(constants.routing.LOGIN);
+    history.push(constants.routing.HOME);
   };
 
   return (

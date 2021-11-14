@@ -5,7 +5,7 @@ using ChatApp.Dtos.Common;
 using ChatApp.Dtos.Models.Auths;
 using ChatApp.Dtos.Models.Users;
 using ChatApp.Services.IServices;
-using ChatApp.Utilities.Enums;
+using ChatApp.Entities.Enums;
 using ChatApp.Utilities.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace ChatApp.Apis.Controllers.v1
 {
-    [Route("api/users/v1")]
+    [Route("api/v1/users")]
     public class UserController : BaseController
     {
         private readonly ILogger<UserController> _logger;
