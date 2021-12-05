@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using ChatApp.Entities.Common;
-using ChatApp.Utilities.Constants;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 

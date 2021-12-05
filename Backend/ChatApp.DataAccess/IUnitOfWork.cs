@@ -4,6 +4,7 @@ namespace ChatApp.DataAccess
 {
     public interface IUnitOfWork
     {
-        IRepository<TDocument> GetRepository<TDocument>() where TDocument : BaseModel;
+        IRepository<TDocument> GetRepository<TDocument>()
+            where TDocument : BaseModel;
     }
 }

@@ -233,10 +233,9 @@ namespace ChatApp.Services.Services
                 .First(x => x.Type == UserClaimTypes.UserId)
                 .Value;
 
-            var builder = MongoExtension.GetBuilders<User>();
             var user = await _unitOfWork
                 .GetRepository<User>()
-                .FirstOrDefault(builder.Eq(x => x.Id, userId));
+                .FindById(userId);
             if (user == null) throw new Exception("User is null");
 
             var isGoogleLogin = Convert.ToBoolean(jwtToken.Claims

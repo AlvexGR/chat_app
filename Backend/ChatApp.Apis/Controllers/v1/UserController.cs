@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using ChatApp.Apis.Filters;
+using ChatApp.Apis.Hubs;
 using ChatApp.Dtos.Common;
 using ChatApp.Dtos.Models.Auths;
 using ChatApp.Dtos.Models.Users;

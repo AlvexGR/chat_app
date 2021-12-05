@@ -38,7 +38,10 @@ namespace ChatApp.Apis
             services.AddAutoMapper(typeof(MappingProfile));
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-            services.AddSignalR();
+            services.AddSignalR(options =>
+            {
+                options.AddFilter<HubAuthFilter>();
+            });
             services.AddHubs();
 
             services.AddFilters();

@@ -241,7 +241,13 @@ namespace ChatApp.Services.Services
                 .Eq(x => x.Id, userId);
 
             var user = await userRepo.FirstOrDefault(userQuery);
+            MyMethod();
             return user != null ? _mapper.Map<UserDto>(user) : null;
+        }
+
+        public void MyMethod()
+        {
+            // Gọi 100 cái methods khác
         }
 
         private JwtSettingDto GetJwtSetting()

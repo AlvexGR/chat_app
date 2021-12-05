@@ -1,82 +1,37 @@
 import { useEffect, useState } from "react";
-import { HubConnectionBuilder, HubConnectionState } from "@microsoft/signalr";
-import { hubMethods } from "../../commons/hubMethods";
-import { authService } from "../../services/api/authService";
+import { connect } from "react-redux";
+import { chatService } from "../../services/hub/chatService";
 
-const BASE_URL = process.env.REACT_APP_API_URL;
-const PROTOCOL = process.env.REACT_APP_PROTOCOL;
-const HUB_VERSION = process.env.REACT_APP_HUB_VERSION;
-
-const Chat = () => {
+const Chat = (props) => {
   const [message, setMessage] = useState("");
-  const [connected, setConnected] = useState(false);
-  const [chatHub, setChatHub] = useState(null);
   const [toSendMessage, setToSendMessage] = useState("");
 
-  // TODO: Refactor to Layout and use props
-  const initConnection = async () => {
-    const connection = new HubConnectionBuilder()
-      .withUrl(`${PROTOCOL}://${BASE_URL}/${HUB_VERSION}/chat`, {
-        accessTokenFactory: () => authService.getToken(),
-      })
-      .build();
-
-    connection.onclose(() => setConnected(false));
-    await startConnection(connection);
-  };
-
-  const startConnection = async (connection) => {
-    try {
-      await connection.start();
-      setConnected(true);
-      setChatHub(connection);
-      listenToHub(connection);
-    } catch (err) {
-      console.log(err);
-      setTimeout(() => startConnection(connection), 5000);
-    }
-  };
-
   useEffect(() => {
-    if (connected) return;
-    initConnection();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [connected]);
-
-  const listenToHub = (connection) => {
-    connection.on(hubMethods.listen.RECEIVE_MESSAGE, (user, message) => {
-      setMessage((prev) => {
-        if (!prev) return `${user}: ${message}`;
-        return `${prev}\n${user}: ${message}`;
-      });
+    if (!props.hubListenReducer.data) return;
+    setMessage((prev) => {
+      const data = props.hubListenReducer.data;
+      const newMessageLine = `${data.receiverId}: ${data.content}`;
+      if (!prev) return newMessageLine;
+      return `${prev}\n${newMessageLine}`;
     });
-  };
+  }, [props.hubListenReducer]);
 
-  const sendMessage = async () => {
-    if (
-      !connected ||
-      !chatHub ||
-      chatHub.state !== HubConnectionState.Connected ||
-      !toSendMessage
-    )
-      return;
+  const sendMessage = () => {
     try {
-      await chatHub.invoke(
-        hubMethods.invoke.SEND_MESSAGE,
-        "Test",
-        toSendMessage
-      );
+      chatService.sendMessage({
+        receiverId: "618f247f6a5526698ffd986d",
+        content: toSendMessage,
+      });
       setToSendMessage("");
     } catch (err) {
       console.log(err);
     }
   };
 
-  const onPress = async (e) => {
+  const onPress = (e) => {
     if (e.charCode !== 13) return;
     e.preventDefault();
-    await sendMessage();
+    sendMessage();
   };
 
   return (
@@ -98,4 +53,10 @@ const Chat = () => {
   );
 };
 
-export default Chat;
+const mapStateToProps = (state) => {
+  return {
+    hubListenReducer: state.hubListenReducer,
+  };
+};
+
+export default connect(mapStateToProps)(Chat);

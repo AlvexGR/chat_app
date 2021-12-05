@@ -9,6 +9,8 @@ namespace ChatApp.DataAccess
     {
         IMongoCollection<TDocument> Collection { get; }
 
+        Task<TDocument> FindById(string id);
+
         Task<IEnumerable<TDocument>> FindAll();
 
         Task<IEnumerable<TDocument>> Find(FilterDefinition<TDocument> filter, FindOptions<TDocument, TDocument> options = null);

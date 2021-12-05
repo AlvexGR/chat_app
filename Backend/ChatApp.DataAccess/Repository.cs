@@ -34,6 +34,13 @@ namespace ChatApp.DataAccess
             Collection = database.GetCollection<TDocument>(MongoCollectionNames.Get(typeof(TDocument).Name));
         }
 
+        public async Task<TDocument> FindById(string id)
+        {
+            var filter = MongoExtension.GetBuilders<TDocument>().Eq(x => x.Id, id)
+                         & MongoExtension.GetBuilders<TDocument>().Ne(x => x.IsDeleted, true);
+            return await(await Collection.FindAsync(filter)).FirstAsync();
+        }
+
         public async Task<IEnumerable<TDocument>> FindAll()
         {
             var filter = MongoExtension.GetBuilders<TDocument>().Ne(x => x.IsDeleted, true);
